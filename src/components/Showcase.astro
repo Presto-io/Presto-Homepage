@@ -10,6 +10,7 @@ const slides = [
     en_title: 'What You See Is What You Get',
     zh_desc: '左右分栏实时预览，拖拽分割线自由调整，沉浸式 Markdown 编辑体验。',
     en_desc: 'Side-by-side live preview with draggable splitter. An immersive Markdown editing experience.',
+    focus: '50% 25%',
   },
   {
     id: 'document',
@@ -21,6 +22,7 @@ const slides = [
     en_title: 'Professional Document Layout',
     zh_desc: '符合 GB/T 9704-2012 标准的类公文排版，支持标题、作者、日期等元素。',
     en_desc: 'Official document typesetting following GB/T 9704-2012, with title, author, date support.',
+    focus: '65% 20%',
   },
   {
     id: 'lesson',
@@ -32,6 +34,7 @@ const slides = [
     en_title: 'Lesson Plan Template',
     zh_desc: '将 Markdown 格式的实操教案转换为标准表格排版，适合教学场景。',
     en_desc: 'Convert Markdown lesson plans into standard table layouts, perfect for teaching.',
+    focus: '60% 15%',
   },
   {
     id: 'batch',
@@ -43,6 +46,7 @@ const slides = [
     en_title: 'One-Click Batch Export',
     zh_desc: '拖拽多个文件或 ZIP 包，选择模板，一键批量转换为 PDF 并打包下载。',
     en_desc: 'Drag multiple files or ZIPs, pick a template, batch convert to PDF with one click.',
+    focus: '50% 30%',
   },
   {
     id: 'templates',
@@ -54,6 +58,7 @@ const slides = [
     en_title: 'Template Management',
     zh_desc: '管理内置和社区模板，支持搜索、安装、卸载和从 ZIP 导入。',
     en_desc: 'Manage built-in and community templates. Search, install, uninstall, import from ZIP.',
+    focus: '50% 25%',
   },
 ];
 ---
@@ -77,43 +82,45 @@ const slides = [
     </div>
   </div>
 
-  <!-- Carousel (full-width, overflow hidden) -->
+  <!-- Carousel with peek effect -->
   <div class="carousel animate-on-scroll" id="showcase-carousel" style="transition-delay: 0.15s">
-    <div class="carousel-track" id="carousel-track">
-      {slides.map((s, i) => (
-        <div class="carousel-slide" data-index={i}>
-          <div class="slide-inner">
-            <div class="slide-text">
-              <span class="slide-tag">
-                <span class="zh">{s.zh}</span>
-                <span class="en">{s.en}</span>
-              </span>
-              <h3 class="slide-title">
-                <span class="zh">{s.zh_title}</span>
-                <span class="en">{s.en_title}</span>
-              </h3>
-              <p class="slide-desc">
-                <span class="zh">{s.zh_desc}</span>
-                <span class="en">{s.en_desc}</span>
-              </p>
-            </div>
-            <div class="slide-image">
-              <img
-                class="slide-img light-img"
-                src={s.lightImg}
-                alt={s.en}
-                loading="lazy"
-              />
-              <img
-                class="slide-img dark-img"
-                src={s.darkImg}
-                alt={s.en}
-                loading="lazy"
-              />
+    <div class="carousel-viewport" id="carousel-viewport">
+      <div class="carousel-track" id="carousel-track">
+        {slides.map((s, i) => (
+          <div class={`carousel-slide ${i === 0 ? 'is-active' : ''}`} data-index={i}>
+            <div class="slide-card">
+              <div class="slide-text">
+                <span class="slide-tag">
+                  <span class="zh">{s.zh}</span>
+                  <span class="en">{s.en}</span>
+                </span>
+                <h3 class="slide-title">
+                  <span class="zh">{s.zh_title}</span>
+                  <span class="en">{s.en_title}</span>
+                </h3>
+                <p class="slide-desc">
+                  <span class="zh">{s.zh_desc}</span>
+                  <span class="en">{s.en_desc}</span>
+                </p>
+              </div>
+              <div class="slide-image">
+                <img
+                  class="slide-img light-img"
+                  src={s.lightImg}
+                  alt={s.en}
+                  loading="lazy"
+                />
+                <img
+                  class="slide-img dark-img"
+                  src={s.darkImg}
+                  alt={s.en}
+                  loading="lazy"
+                />
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
 
     <!-- Controls -->
@@ -145,9 +152,10 @@ const slides = [
 <script is:inline>
 (function () {
   var track = document.getElementById('carousel-track');
+  var viewport = document.getElementById('carousel-viewport');
   var pauseBtn = document.getElementById('carousel-pause');
   var dotsWrap = document.getElementById('carousel-dots');
-  if (!track || !pauseBtn || !dotsWrap) return;
+  if (!track || !viewport || !pauseBtn || !dotsWrap) return;
 
   var slides = track.querySelectorAll('.carousel-slide');
   var dots = dotsWrap.querySelectorAll('.carousel-dot');
@@ -159,37 +167,46 @@ const slides = [
   var startTime = 0;
   var rafId = null;
 
+  /* Calculate the px offset to center slide[idx] in the viewport */
+  function getOffset(idx) {
+    var slide = slides[idx];
+    if (!slide) return 0;
+    var vpW = viewport.offsetWidth;
+    var slideLeft = slide.offsetLeft;
+    var slideW = slide.offsetWidth;
+    return -(slideLeft - (vpW - slideW) / 2);
+  }
+
   function goTo(idx, animate) {
     current = ((idx % total) + total) % total;
-    var offset = current * -100;
-    track.style.transition = animate !== false ? 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)' : 'none';
-    track.style.transform = 'translateX(' + offset + '%)';
-    for (var i = 0; i < dots.length; i++) {
-      dots[i].classList.toggle('is-active', i === current);
-      var prog = dots[i].querySelector('.dot-progress');
-      if (prog) {
-        prog.style.transition = 'none';
-        prog.style.width = '0%';
-      }
+    var px = getOffset(current);
+    track.style.transition = animate !== false
+      ? 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)'
+      : 'none';
+    track.style.transform = 'translateX(' + px + 'px)';
+
+    for (var i = 0; i < slides.length; i++) {
+      slides[i].classList.toggle('is-active', i === current);
+    }
+    for (var j = 0; j < dots.length; j++) {
+      dots[j].classList.toggle('is-active', j === current);
+      var prog = dots[j].querySelector('.dot-progress');
+      if (prog) { prog.style.transition = 'none'; prog.style.width = '0%'; }
     }
   }
 
   function startProgress() {
     startTime = Date.now();
     cancelAnimationFrame(rafId);
-    var activeDot = dots[current];
-    var prog = activeDot ? activeDot.querySelector('.dot-progress') : null;
+    var prog = dots[current] ? dots[current].querySelector('.dot-progress') : null;
     if (!prog) return;
     prog.style.transition = 'none';
     prog.style.width = '0%';
     function tick() {
       if (paused) return;
-      var elapsed = Date.now() - startTime;
-      var pct = Math.min((elapsed / interval) * 100, 100);
+      var pct = Math.min(((Date.now() - startTime) / interval) * 100, 100);
       prog.style.width = pct + '%';
-      if (pct < 100) {
-        rafId = requestAnimationFrame(tick);
-      }
+      if (pct < 100) rafId = requestAnimationFrame(tick);
     }
     rafId = requestAnimationFrame(tick);
   }
@@ -212,72 +229,73 @@ const slides = [
   /* Pause / Play */
   pauseBtn.addEventListener('click', function () {
     paused = !paused;
-    var iconPause = pauseBtn.querySelector('.icon-pause');
-    var iconPlay = pauseBtn.querySelector('.icon-play');
+    var iPause = pauseBtn.querySelector('.icon-pause');
+    var iPlay = pauseBtn.querySelector('.icon-play');
     if (paused) {
       stopAuto();
-      iconPause.style.display = 'none';
-      iconPlay.style.display = 'block';
+      iPause.style.display = 'none'; iPlay.style.display = 'block';
     } else {
-      iconPause.style.display = 'block';
-      iconPlay.style.display = 'none';
+      iPause.style.display = 'block'; iPlay.style.display = 'none';
       startAuto();
     }
   });
 
   /* Dot click */
-  for (var i = 0; i < dots.length; i++) {
+  for (var d = 0; d < dots.length; d++) {
     (function (idx) {
       dots[idx].addEventListener('click', function () {
         if (idx === current) return;
         goTo(idx, true);
         if (!paused) startAuto();
       });
-    })(i);
+    })(d);
   }
 
-  /* Touch / drag support */
-  var startX = 0, dragging = false, dragDelta = 0;
+  /* Click on side slides to navigate */
+  for (var s = 0; s < slides.length; s++) {
+    (function (idx) {
+      slides[idx].addEventListener('click', function () {
+        if (idx === current) return;
+        goTo(idx, true);
+        if (!paused) startAuto();
+      });
+    })(s);
+  }
 
+  /* Touch / drag */
+  var startX = 0, dragging = false, dragDelta = 0;
   track.addEventListener('touchstart', function (e) {
-    startX = e.touches[0].clientX;
-    dragging = true;
-    dragDelta = 0;
+    startX = e.touches[0].clientX; dragging = true; dragDelta = 0;
     track.style.transition = 'none';
   }, { passive: true });
-
   track.addEventListener('touchmove', function (e) {
     if (!dragging) return;
     dragDelta = e.touches[0].clientX - startX;
-    var base = current * -100;
-    var pxToPercent = (dragDelta / track.offsetWidth) * 100;
-    track.style.transform = 'translateX(' + (base + pxToPercent) + '%)';
+    track.style.transform = 'translateX(' + (getOffset(current) + dragDelta) + 'px)';
   }, { passive: true });
-
   track.addEventListener('touchend', function () {
     if (!dragging) return;
     dragging = false;
-    var threshold = track.offsetWidth * 0.15;
-    if (dragDelta < -threshold && current < total - 1) {
-      goTo(current + 1, true);
-    } else if (dragDelta > threshold && current > 0) {
-      goTo(current - 1, true);
-    } else {
-      goTo(current, true);
-    }
+    var threshold = viewport.offsetWidth * 0.12;
+    if (dragDelta < -threshold && current < total - 1) goTo(current + 1, true);
+    else if (dragDelta > threshold && current > 0) goTo(current - 1, true);
+    else goTo(current, true);
     if (!paused) startAuto();
   });
 
   /* Pause on hover */
-  var carousel = document.getElementById('showcase-carousel');
-  if (carousel) {
-    carousel.addEventListener('mouseenter', function () {
-      if (!paused) stopAuto();
-    });
-    carousel.addEventListener('mouseleave', function () {
-      if (!paused) startAuto();
-    });
+  var carouselEl = document.getElementById('showcase-carousel');
+  if (carouselEl) {
+    carouselEl.addEventListener('mouseenter', function () { if (!paused) stopAuto(); });
+    carouselEl.addEventListener('mouseleave', function () { if (!paused) startAuto(); });
   }
+
+  /* Recalc on resize */
+  var resizeTimer;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () { goTo(current, false); }, 100);
+  });
 
   /* Init */
   goTo(0, false);
@@ -297,48 +315,68 @@ const slides = [
   }
 
   /* ============================================
-     CAROUSEL
+     CAROUSEL — peek adjacent slides
      ============================================ */
 
   .carousel {
     position: relative;
     max-width: 1200px;
     margin: 0 auto;
+  }
+
+  .carousel-viewport {
     overflow: hidden;
-    border-radius: var(--radius);
-    padding: 0 1.5rem;
+    /* Extra padding so box-shadows on active card aren't clipped */
+    padding: 1rem 0 1.5rem;
   }
 
   .carousel-track {
     display: flex;
+    gap: 2rem;
     will-change: transform;
   }
 
+  /* Each slide takes ~78% of viewport so neighbors peek */
   .carousel-slide {
-    flex: 0 0 100%;
+    flex: 0 0 78%;
     min-width: 0;
+    cursor: pointer;
+    transition: opacity 0.5s ease, filter 0.5s ease;
+    opacity: 0.45;
+    filter: saturate(0.6);
   }
 
-  .slide-inner {
-    display: grid;
-    grid-template-columns: 1fr 1.4fr;
-    align-items: center;
-    gap: 2.5rem;
-    background: var(--card-bg);
+  .carousel-slide.is-active {
+    opacity: 1;
+    filter: saturate(1);
+    cursor: default;
+  }
+
+  /* ============================================
+     SLIDE CARD — vertical: text top, image below
+     ============================================ */
+
+  .slide-card {
+    background: var(--color-bg-secondary);
     border: 1px solid var(--card-border);
     border-radius: var(--radius);
-    padding: 2.5rem;
-    min-height: 420px;
+    padding: 2rem;
     overflow: hidden;
+    transition: box-shadow 0.4s ease, border-color 0.4s ease;
   }
 
-  /* --- Slide text --- */
+  .carousel-slide.is-active .slide-card {
+    box-shadow: var(--card-shadow-hover);
+    border-color: var(--color-border);
+  }
+
+  /* --- Text area --- */
 
   .slide-text {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
+    padding-bottom: 1.5rem;
   }
 
   .slide-tag {
@@ -362,31 +400,25 @@ const slides = [
   }
 
   .slide-title {
-    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-size: clamp(1.375rem, 3vw, 1.75rem);
     font-weight: 750;
     line-height: 1.2;
-    letter-spacing: -0.025em;
+    letter-spacing: -0.02em;
     color: var(--color-text);
   }
 
   .slide-desc {
-    font-size: 1rem;
+    font-size: 0.9375rem;
     color: var(--color-text-secondary);
-    line-height: 1.65;
+    line-height: 1.6;
+    max-width: 540px;
   }
 
-  /* --- Slide image --- */
+  /* --- Image area: cropped focus --- */
 
   .slide-image {
-    border-radius: var(--radius-sm);
     overflow: hidden;
-    box-shadow: var(--card-shadow);
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s ease;
-  }
-
-  .slide-inner:hover .slide-image {
-    transform: translateY(-4px) scale(1.01);
-    box-shadow: var(--card-shadow-hover);
+    position: relative;
   }
 
   .slide-img {
@@ -403,7 +435,7 @@ const slides = [
   }
 
   /* ============================================
-     CONTROLS — pause button + progress dots
+     CONTROLS — pause + dots
      ============================================ */
 
   .carousel-controls {
@@ -411,11 +443,10 @@ const slides = [
     align-items: center;
     justify-content: center;
     gap: 0.625rem;
-    margin-top: 1.75rem;
+    margin-top: 0.75rem;
     padding-bottom: 0.5rem;
   }
 
-  /* Pause / Play button */
   .carousel-pause {
     display: flex;
     align-items: center;
@@ -436,7 +467,6 @@ const slides = [
     transform: scale(1.08);
   }
 
-  /* Dots container */
   .carousel-dots {
     display: flex;
     align-items: center;
@@ -447,7 +477,6 @@ const slides = [
     padding: 0.375rem 0.625rem;
   }
 
-  /* Individual dot */
   .carousel-dot {
     position: relative;
     width: 8px;
@@ -470,7 +499,6 @@ const slides = [
     background: var(--color-border);
   }
 
-  /* Progress bar inside active dot */
   .dot-progress {
     position: absolute;
     left: 0;
@@ -486,28 +514,20 @@ const slides = [
      ============================================ */
 
   @media (max-width: 768px) {
-    .carousel {
-      padding: 0 1rem;
+    .carousel-slide {
+      flex: 0 0 88%;
     }
 
-    .slide-inner {
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
+    .slide-card {
       padding: 1.5rem;
-      min-height: auto;
-    }
-
-    .slide-text {
-      text-align: center;
-      align-items: center;
     }
 
     .slide-title {
-      font-size: 1.375rem;
+      font-size: 1.25rem;
     }
 
     .slide-desc {
-      font-size: 0.9375rem;
+      font-size: 0.875rem;
     }
 
     .carousel-dot.is-active {
@@ -516,7 +536,11 @@ const slides = [
   }
 
   @media (max-width: 480px) {
-    .slide-inner {
+    .carousel-slide {
+      flex: 0 0 92%;
+    }
+
+    .slide-card {
       padding: 1.25rem;
     }
   }
@@ -529,7 +553,10 @@ const slides = [
     .carousel-track {
       transition: none !important;
     }
-    .slide-image {
+    .carousel-slide {
+      transition: none !important;
+    }
+    .slide-img {
       transition: none !important;
     }
     .dot-progress {

@@ -103,49 +103,43 @@ const platforms = [
     </div>
 
     <!-- macOS security tip -->
-    <div class="macos-tip animate-on-scroll" style="transition-delay: 0.25s">
-      <div class="tip-icon">
+    <div class="info-card animate-on-scroll" style="transition-delay: 0.25s">
+      <div class="info-icon info-icon--warn">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
       </div>
-      <div class="tip-content">
-        <p class="tip-title">
+      <div class="info-content">
+        <p class="info-title">
           <span class="zh">macOS 安全提示</span>
           <span class="en">macOS Security Note</span>
         </p>
-        <p class="tip-desc">
+        <p class="info-desc">
           <span class="zh">Presto 尚未获得 Apple 开发者签名。首次打开时如遇到安全提示，请在终端中执行以下命令：</span>
-          <span class="en">Presto is not yet signed with an Apple Developer certificate. If blocked on first launch, run these commands in Terminal:</span>
+          <span class="en">Presto is not yet signed with an Apple Developer certificate. If blocked on first launch, run this command in Terminal:</span>
         </p>
-        <div class="tip-commands">
-          <div class="code-block">
-            <code>sudo xattr -r -d com.apple.quarantine "/Applications/Presto.app"</code>
-            <button class="copy-btn" data-copy='sudo xattr -r -d com.apple.quarantine "/Applications/Presto.app"'>
-              <span class="zh">复制</span>
-              <span class="en">Copy</span>
-            </button>
-          </div>
+        <div class="code-block">
+          <code>sudo xattr -r -d com.apple.quarantine "/Applications/Presto.app"</code>
+          <button class="copy-btn" data-copy='sudo xattr -r -d com.apple.quarantine "/Applications/Presto.app"'>
+            <span class="zh">复制</span>
+            <span class="en">Copy</span>
+          </button>
         </div>
       </div>
     </div>
 
     <!-- Docker section -->
-    <div class="docker-section animate-on-scroll" style="transition-delay: 0.35s">
-      <div class="docker-content">
-        <div class="docker-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M13.983 11.078h2.119a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.119a.185.185 0 00-.185.185v1.888c0 .102.083.185.185.185m-2.954-5.43h2.118a.186.186 0 00.186-.186V3.574a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.186m0 2.716h2.118a.187.187 0 00.186-.186V6.29a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.887c0 .102.082.186.185.186m-2.93 0h2.12a.186.186 0 00.184-.186V6.29a.185.185 0 00-.185-.185H8.1a.185.185 0 00-.185.185v1.887c0 .102.083.186.185.186m-2.964 0h2.119a.186.186 0 00.185-.186V6.29a.186.186 0 00-.185-.185H5.136a.186.186 0 00-.186.185v1.887c0 .102.084.186.186.186m5.893 2.715h2.118a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.185m-2.93 0h2.12a.185.185 0 00.184-.185V9.006a.185.185 0 00-.184-.186h-2.12a.185.185 0 00-.184.185v1.888c0 .102.083.185.185.185m-2.964 0h2.119a.185.185 0 00.185-.185V9.006a.186.186 0 00-.185-.186H5.136a.186.186 0 00-.186.185v1.888c0 .102.084.185.186.185m-2.92 0h2.12a.185.185 0 00.184-.185V9.006a.186.186 0 00-.184-.186h-2.12a.185.185 0 00-.184.186v1.887c0 .102.082.185.185.185M23.763 9.89c-.065-.051-.672-.51-1.954-.51-.338.001-.676.03-1.01.087-.248-1.7-1.653-2.53-1.716-2.566l-.344-.199-.226.327c-.284.438-.49.922-.612 1.43-.23.97-.09 1.882.403 2.661-.595.332-1.55.413-1.744.42H.751a.751.751 0 00-.75.748 11.376 11.376 0 00.692 4.062c.545 1.428 1.355 2.48 2.41 3.124 1.18.723 3.1 1.137 5.275 1.137.983.003 1.963-.086 2.93-.266a12.248 12.248 0 003.823-1.389c.98-.567 1.86-1.288 2.61-2.136 1.252-1.418 1.998-2.997 2.553-4.4h.221c1.372 0 2.215-.549 2.68-1.009.309-.293.55-.65.707-1.046l.098-.288z"/></svg>
-        </div>
-        <div class="docker-text">
-          <h3>
-            <span class="zh">Docker 部署 Web 版</span>
-            <span class="en">Deploy Web Version with Docker</span>
-          </h3>
-          <p>
-            <span class="zh">适合局域网多人共享使用，一行命令即可部署 Presto Web 版。</span>
-            <span class="en">Perfect for LAN sharing. Deploy the Presto web version with a single command.</span>
-          </p>
-        </div>
+    <div class="info-card animate-on-scroll" style="transition-delay: 0.35s">
+      <div class="info-icon info-icon--accent">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M13.983 11.078h2.119a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.119a.185.185 0 00-.185.185v1.888c0 .102.083.185.185.185m-2.954-5.43h2.118a.186.186 0 00.186-.186V3.574a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.186m0 2.716h2.118a.187.187 0 00.186-.186V6.29a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.887c0 .102.082.186.185.186m-2.93 0h2.12a.186.186 0 00.184-.186V6.29a.185.185 0 00-.185-.185H8.1a.185.185 0 00-.185.185v1.887c0 .102.083.186.185.186m-2.964 0h2.119a.186.186 0 00.185-.186V6.29a.186.186 0 00-.185-.185H5.136a.186.186 0 00-.186.185v1.887c0 .102.084.186.186.186m5.893 2.715h2.118a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.185m-2.93 0h2.12a.185.185 0 00.184-.185V9.006a.185.185 0 00-.184-.186h-2.12a.185.185 0 00-.184.185v1.888c0 .102.083.185.185.185m-2.964 0h2.119a.185.185 0 00.185-.185V9.006a.186.186 0 00-.185-.186H5.136a.186.186 0 00-.186.185v1.888c0 .102.084.185.186.185m-2.92 0h2.12a.185.185 0 00.184-.185V9.006a.186.186 0 00-.184-.186h-2.12a.185.185 0 00-.184.186v1.887c0 .102.082.185.185.185M23.763 9.89c-.065-.051-.672-.51-1.954-.51-.338.001-.676.03-1.01.087-.248-1.7-1.653-2.53-1.716-2.566l-.344-.199-.226.327c-.284.438-.49.922-.612 1.43-.23.97-.09 1.882.403 2.661-.595.332-1.55.413-1.744.42H.751a.751.751 0 00-.75.748 11.376 11.376 0 00.692 4.062c.545 1.428 1.355 2.48 2.41 3.124 1.18.723 3.1 1.137 5.275 1.137.983.003 1.963-.086 2.93-.266a12.248 12.248 0 003.823-1.389c.98-.567 1.86-1.288 2.61-2.136 1.252-1.418 1.998-2.997 2.553-4.4h.221c1.372 0 2.215-.549 2.68-1.009.309-.293.55-.65.707-1.046l.098-.288z"/></svg>
       </div>
-      <div class="docker-commands">
+      <div class="info-content">
+        <p class="info-title">
+          <span class="zh">Docker 部署 Web 版</span>
+          <span class="en">Deploy Web Version with Docker</span>
+        </p>
+        <p class="info-desc">
+          <span class="zh">适合局域网多人共享使用，一行命令即可部署 Presto Web 版。</span>
+          <span class="en">Perfect for LAN sharing. Deploy the Presto web version with a single command.</span>
+        </p>
         <div class="code-block">
           <code>docker run -d -p 8080:8080 ghcr.io/presto-io/presto</code>
           <button class="copy-btn" data-copy="docker run -d -p 8080:8080 ghcr.io/presto-io/presto">
@@ -153,7 +147,7 @@ const platforms = [
             <span class="en">Copy</span>
           </button>
         </div>
-        <p class="docker-hint">
+        <p class="info-hint">
           <span class="zh">然后打开浏览器访问 <code>http://localhost:8080</code></span>
           <span class="en">Then visit <code>http://localhost:8080</code> in your browser</span>
         </p>
@@ -204,7 +198,7 @@ const platforms = [
   .platform-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 1.25rem;
+    gap: 2rem;
     margin-bottom: 2rem;
   }
 
@@ -338,114 +332,82 @@ const platforms = [
     margin-bottom: 0.5rem;
   }
 
-  /* macOS security tip */
-  .macos-tip {
+  /* Unified info cards (macOS tip & Docker) */
+  .info-card {
     display: flex;
-    gap: 1rem;
+    gap: 1.25rem;
     align-items: flex-start;
     background: var(--card-bg);
     border: 1px solid var(--card-border);
     border-radius: var(--radius);
-    padding: 1.25rem 1.5rem;
-    margin-bottom: 1.25rem;
+    padding: 1.5rem 2rem;
+    margin-bottom: 2rem;
   }
 
-  .tip-icon {
+  .info-card:last-child {
+    margin-bottom: 0;
+  }
+
+  .info-icon {
     flex-shrink: 0;
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 10px;
+  }
+
+  .info-icon--warn {
     background: rgba(245, 158, 11, 0.1);
     color: #f59e0b;
   }
 
+  .info-icon--accent {
+    background: rgba(59, 130, 246, 0.08);
+    color: var(--color-accent);
+  }
+
   @media (prefers-color-scheme: dark) {
-    .tip-icon {
+    .info-icon--warn {
       background: rgba(245, 158, 11, 0.15);
       color: #fbbf24;
     }
+    .info-icon--accent {
+      background: rgba(96, 165, 250, 0.12);
+    }
   }
 
-  .tip-title {
-    font-size: 0.875rem;
+  .info-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .info-title {
+    font-size: 0.9375rem;
     font-weight: 650;
     margin-bottom: 0.25rem;
   }
 
-  .tip-desc {
+  .info-desc {
     font-size: 0.8125rem;
     color: var(--color-text-secondary);
     line-height: 1.5;
-    margin-bottom: 0.625rem;
+    margin-bottom: 0.75rem;
   }
 
-  .tip-commands {
-    display: flex;
-    flex-direction: column;
-    gap: 0.375rem;
-  }
-
-  .tip-commands .code-block {
+  .info-content .code-block {
     font-size: 0.8125rem;
     padding: 0.625rem 1rem;
   }
 
-  /* Docker section */
-  .docker-section {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: var(--radius);
-    padding: 2rem;
-    display: flex;
-    align-items: flex-start;
-    gap: 2rem;
-  }
-
-  .docker-content {
-    display: flex;
-    gap: 1rem;
-    flex: 1;
-  }
-
-  .docker-icon {
-    flex-shrink: 0;
-    width: 48px;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 12px;
-    background: var(--color-bg-secondary);
-    color: var(--color-accent);
-  }
-
-  .docker-text h3 {
-    font-size: 1rem;
-    font-weight: 650;
-    margin-bottom: 0.25rem;
-  }
-
-  .docker-text p {
-    font-size: 0.875rem;
-    color: var(--color-text-secondary);
-    line-height: 1.5;
-  }
-
-  .docker-commands {
-    flex-shrink: 0;
-    width: 320px;
-  }
-
-  .docker-hint {
+  .info-hint {
     font-size: 0.8125rem;
     color: var(--color-text-muted);
     margin-top: 0.5rem;
   }
 
-  .docker-hint code {
+  .info-hint code {
     font-family: var(--font-mono);
     color: var(--color-accent);
     font-size: 0.8125rem;
@@ -459,12 +421,10 @@ const platforms = [
       margin-right: auto;
     }
 
-    .docker-section {
+    .info-card {
       flex-direction: column;
-    }
-
-    .docker-commands {
-      width: 100%;
+      gap: 1rem;
+      padding: 1.5rem;
     }
   }
 </style>

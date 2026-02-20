@@ -182,37 +182,27 @@
     margin-bottom: 3rem;
   }
 
-  /* Hero image */
+  /* Hero image — drop-shadow follows PNG alpha transparency */
   .hero-image {
     position: relative;
     z-index: 1;
     max-width: 1000px;
     margin: 0 auto;
-    border-radius: var(--radius);
-    overflow: hidden;
-    box-shadow:
-      0 20px 60px -15px rgba(0, 0, 0, 0.15),
-      0 0 0 1px var(--color-border);
-    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.12));
+    transition: transform 0.4s ease, filter 0.4s ease;
   }
 
   .hero-image:hover {
     transform: translateY(-4px);
-    box-shadow:
-      0 32px 80px -20px rgba(0, 0, 0, 0.2),
-      0 0 0 1px var(--color-border);
+    filter: drop-shadow(0 28px 50px rgba(0, 0, 0, 0.18));
   }
 
   @media (prefers-color-scheme: dark) {
     .hero-image {
-      box-shadow:
-        0 20px 60px -15px rgba(0, 0, 0, 0.5),
-        0 0 40px -10px rgba(59, 130, 246, 0.1);
+      filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.45));
     }
     .hero-image:hover {
-      box-shadow:
-        0 32px 80px -20px rgba(0, 0, 0, 0.6),
-        0 0 60px -10px rgba(59, 130, 246, 0.15);
+      filter: drop-shadow(0 28px 50px rgba(0, 0, 0, 0.55));
     }
   }
 

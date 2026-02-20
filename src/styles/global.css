@@ -36,7 +36,7 @@
   --code-bg: #f1f5f9;
   --code-text: #1e293b;
   --section-gap: 7rem;
-  --radius: 16px;
+  --radius: 55px;
   --radius-sm: 10px;
   --radius-xs: 6px;
   --transition: 0.2s ease;
@@ -282,12 +282,25 @@ html[lang="en"] .zh { display: none !important; }
 }
 
 /* --- Responsive --- */
+@media (max-width: 1024px) {
+  :root {
+    --radius: 48px;
+  }
+}
+
 @media (max-width: 768px) {
   :root {
     --section-gap: 4rem;
+    --radius: 40px;
   }
 
   .section-title {
     font-size: clamp(1.5rem, 6vw, 2rem);
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --radius: 30px;
   }
 }
