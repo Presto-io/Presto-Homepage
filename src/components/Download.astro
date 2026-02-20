@@ -1,0 +1,470 @@
+---
+const version = '0.2.1';
+const releaseBase = `https://github.com/Presto-io/Presto/releases/download/v${version}`;
+
+const platforms = [
+  {
+    id: 'macos',
+    zh: 'macOS',
+    en: 'macOS',
+    icon: 'apple',
+    downloads: [
+      { label: 'Apple Silicon (M1+)', url: `${releaseBase}/Presto-${version}-macOS-arm64.dmg`, ext: '.dmg' },
+      { label: 'Intel', url: `${releaseBase}/Presto-${version}-macOS-amd64.dmg`, ext: '.dmg' },
+    ],
+    extra: {
+      zh: '或使用 Homebrew 安装：',
+      en: 'Or install via Homebrew:',
+      code: 'brew tap brewforge/chinese && brew install presto',
+    },
+  },
+  {
+    id: 'windows',
+    zh: 'Windows',
+    en: 'Windows',
+    icon: 'windows',
+    downloads: [
+      { label: 'x64', url: `${releaseBase}/Presto-${version}-windows-amd64.zip`, ext: '.zip' },
+      { label: 'ARM64', url: `${releaseBase}/Presto-${version}-windows-arm64.zip`, ext: '.zip' },
+    ],
+  },
+  {
+    id: 'linux',
+    zh: 'Linux',
+    en: 'Linux',
+    icon: 'linux',
+    downloads: [
+      { label: 'x64', url: `${releaseBase}/Presto-${version}-linux-amd64.tar.gz`, ext: '.tar.gz' },
+      { label: 'ARM64', url: `${releaseBase}/Presto-${version}-linux-arm64.tar.gz`, ext: '.tar.gz' },
+    ],
+  },
+];
+---
+
+<section class="download section" id="download">
+  <div class="container">
+    <div class="download-header animate-on-scroll">
+      <div class="section-label">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span class="zh">立即下载</span>
+        <span class="en">Download</span>
+      </div>
+      <h2 class="section-title">
+        <span class="zh">获取 <span class="gradient-text">Presto</span></span>
+        <span class="en">Get <span class="gradient-text">Presto</span></span>
+      </h2>
+      <p class="section-desc">
+        <span class="zh">支持 macOS、Windows、Linux 三大平台，免费开源。</span>
+        <span class="en">Available for macOS, Windows, and Linux. Free and open source.</span>
+      </p>
+    </div>
+
+    <div class="platform-grid">
+      {platforms.map((p, i) => (
+        <div class={`platform-card animate-on-scroll`} style={`transition-delay: ${i * 0.1}s`} data-platform={p.id}>
+          <div class="platform-icon-wrap">
+            {p.icon === 'apple' && (
+              <svg class="platform-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+            )}
+            {p.icon === 'windows' && (
+              <svg class="platform-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
+            )}
+            {p.icon === 'linux' && (
+              <svg class="platform-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12.504 0c-.155 0-.315.008-.48.021-4.226.333-3.105 4.807-3.17 6.298-.076 1.092-.3 1.953-1.05 3.02-.885 1.051-2.127 2.75-2.716 4.521-.278.832-.41 1.684-.287 2.489a.424.424 0 00-.11.135c-.26.268-.45.6-.663.839-.199.199-.485.267-.797.4-.313.136-.658.269-.864.68-.09.189-.136.394-.132.602 0 .199.027.4.055.536.058.399.116.728.04.97-.249.68-.28 1.145-.106 1.484.174.334.535.47.94.601.81.2 1.91.135 2.774.6.926.466 1.866.67 2.616.47.526-.116.97-.464 1.208-.946.587-.003 1.23-.269 2.26-.334.699-.058 1.574.267 2.577.2.025.134.063.198.114.333l.003.003c.391.778 1.113 1.368 1.884 1.43.868.065 1.557-.37 1.97-1.07.36-.631.577-1.463.44-2.66.043-.038.075-.158.075-.158.476-.375.758-.677.984-1.131.166-.281.28-.752.043-1.157-.185-.29-.49-.46-.85-.35-.393.197-.543.401-.737.665-.138.19-.27.387-.506.544-.066.044-.135.083-.31.123-.055.015-.135-.01-.19-.04-.13-.065-.2-.199-.275-.4-.075-.199-.15-.499-.35-.799-.3-.401-.7-.453-.9-.453-.1 0-.2.017-.3.033a1.7 1.7 0 01-.336.027c-.1 0-.3-.033-.6-.135-.1-.034-.2-.069-.3-.069h-.1c0-.264.035-.529.068-.729.13-.869.301-1.959.066-3.029-.165-.753-.469-1.475-.914-2.164-.445-.689-1.05-1.348-1.79-1.952-.425-.349-.755-.604-1.05-.804-.08-.055-.155-.107-.235-.16-.575-.39-.875-.669-1.025-1.004-.15-.334-.175-.789-.185-1.544V6.085c.012-.464-.014-1.281-.382-2.103-.264-.597-.675-1.223-1.268-1.772-.6-.547-1.345-.972-2.126-1.158A5.9 5.9 0 0012.504 0"/></svg>
+            )}
+          </div>
+          <h3 class="platform-name">{p.zh}</h3>
+          <div class="platform-downloads">
+            {p.downloads.map((d) => (
+              <a href={d.url} class="download-link" target="_blank" rel="noopener noreferrer">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <span>{d.label}</span>
+                <span class="download-ext">{d.ext}</span>
+              </a>
+            ))}
+          </div>
+          {p.extra && (
+            <div class="platform-extra">
+              <p class="extra-label">
+                <span class="zh">{p.extra.zh}</span>
+                <span class="en">{p.extra.en}</span>
+              </p>
+              <div class="code-block">
+                <code>{p.extra.code}</code>
+                <button class="copy-btn" data-copy={p.extra.code}>
+                  <span class="zh">复制</span>
+                  <span class="en">Copy</span>
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+
+    <!-- macOS security tip -->
+    <div class="macos-tip animate-on-scroll" style="transition-delay: 0.25s">
+      <div class="tip-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <div class="tip-content">
+        <p class="tip-title">
+          <span class="zh">macOS 安全提示</span>
+          <span class="en">macOS Security Note</span>
+        </p>
+        <p class="tip-desc">
+          <span class="zh">Presto 尚未获得 Apple 开发者签名。首次打开时如遇到安全提示，请在终端中执行以下命令：</span>
+          <span class="en">Presto is not yet signed with an Apple Developer certificate. If blocked on first launch, run these commands in Terminal:</span>
+        </p>
+        <div class="tip-commands">
+          <div class="code-block">
+            <code>sudo xattr -r -d com.apple.quarantine "/Applications/Presto.app"</code>
+            <button class="copy-btn" data-copy='sudo xattr -r -d com.apple.quarantine "/Applications/Presto.app"'>
+              <span class="zh">复制</span>
+              <span class="en">Copy</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Docker section -->
+    <div class="docker-section animate-on-scroll" style="transition-delay: 0.35s">
+      <div class="docker-content">
+        <div class="docker-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M13.983 11.078h2.119a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.119a.185.185 0 00-.185.185v1.888c0 .102.083.185.185.185m-2.954-5.43h2.118a.186.186 0 00.186-.186V3.574a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.186m0 2.716h2.118a.187.187 0 00.186-.186V6.29a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.887c0 .102.082.186.185.186m-2.93 0h2.12a.186.186 0 00.184-.186V6.29a.185.185 0 00-.185-.185H8.1a.185.185 0 00-.185.185v1.887c0 .102.083.186.185.186m-2.964 0h2.119a.186.186 0 00.185-.186V6.29a.186.186 0 00-.185-.185H5.136a.186.186 0 00-.186.185v1.887c0 .102.084.186.186.186m5.893 2.715h2.118a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.185m-2.93 0h2.12a.185.185 0 00.184-.185V9.006a.185.185 0 00-.184-.186h-2.12a.185.185 0 00-.184.185v1.888c0 .102.083.185.185.185m-2.964 0h2.119a.185.185 0 00.185-.185V9.006a.186.186 0 00-.185-.186H5.136a.186.186 0 00-.186.185v1.888c0 .102.084.185.186.185m-2.92 0h2.12a.185.185 0 00.184-.185V9.006a.186.186 0 00-.184-.186h-2.12a.185.185 0 00-.184.186v1.887c0 .102.082.185.185.185M23.763 9.89c-.065-.051-.672-.51-1.954-.51-.338.001-.676.03-1.01.087-.248-1.7-1.653-2.53-1.716-2.566l-.344-.199-.226.327c-.284.438-.49.922-.612 1.43-.23.97-.09 1.882.403 2.661-.595.332-1.55.413-1.744.42H.751a.751.751 0 00-.75.748 11.376 11.376 0 00.692 4.062c.545 1.428 1.355 2.48 2.41 3.124 1.18.723 3.1 1.137 5.275 1.137.983.003 1.963-.086 2.93-.266a12.248 12.248 0 003.823-1.389c.98-.567 1.86-1.288 2.61-2.136 1.252-1.418 1.998-2.997 2.553-4.4h.221c1.372 0 2.215-.549 2.68-1.009.309-.293.55-.65.707-1.046l.098-.288z"/></svg>
+        </div>
+        <div class="docker-text">
+          <h3>
+            <span class="zh">Docker 部署 Web 版</span>
+            <span class="en">Deploy Web Version with Docker</span>
+          </h3>
+          <p>
+            <span class="zh">适合局域网多人共享使用，一行命令即可部署 Presto Web 版。</span>
+            <span class="en">Perfect for LAN sharing. Deploy the Presto web version with a single command.</span>
+          </p>
+        </div>
+      </div>
+      <div class="docker-commands">
+        <div class="code-block">
+          <code>docker run -d -p 8080:8080 ghcr.io/presto-io/presto</code>
+          <button class="copy-btn" data-copy="docker run -d -p 8080:8080 ghcr.io/presto-io/presto">
+            <span class="zh">复制</span>
+            <span class="en">Copy</span>
+          </button>
+        </div>
+        <p class="docker-hint">
+          <span class="zh">然后打开浏览器访问 <code>http://localhost:8080</code></span>
+          <span class="en">Then visit <code>http://localhost:8080</code> in your browser</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  // Copy buttons
+  document.querySelectorAll('.copy-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var text = this.getAttribute('data-copy');
+      navigator.clipboard.writeText(text).then(function () {
+        var original = btn.innerHTML;
+        btn.textContent = '✓';
+        setTimeout(function () { btn.innerHTML = original; }, 1500);
+      });
+    });
+  });
+
+  // Auto-detect platform highlight
+  (function () {
+    var ua = navigator.userAgent.toLowerCase();
+    var platform = 'macos';
+    if (ua.indexOf('win') !== -1) platform = 'windows';
+    else if (ua.indexOf('linux') !== -1) platform = 'linux';
+    var card = document.querySelector('[data-platform="' + platform + '"]');
+    if (card) card.classList.add('is-detected');
+  })();
+</script>
+
+<style>
+  .download {
+    background: var(--color-bg-secondary);
+  }
+
+  .download-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .download-header .section-desc {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .platform-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+  }
+
+  .platform-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 1.75rem;
+    text-align: center;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .platform-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--gradient-primary);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
+  }
+
+  .platform-card:hover::after {
+    opacity: 0.03;
+  }
+
+  .platform-card:hover {
+    border-color: var(--color-accent);
+    box-shadow: var(--card-shadow-hover);
+    transform: translateY(-4px);
+  }
+
+  .platform-card.is-detected {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 1px var(--color-accent), var(--card-shadow);
+  }
+
+  .platform-card.is-detected::after {
+    content: '';
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    box-shadow: 0 0 8px var(--color-accent);
+  }
+
+  .platform-icon-wrap {
+    margin-bottom: 1rem;
+  }
+
+  .platform-icon {
+    width: 40px;
+    height: 40px;
+    color: var(--color-text);
+    opacity: 0.8;
+    transition: transform 0.35s ease, opacity 0.35s ease;
+  }
+
+  .platform-card:hover .platform-icon {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+
+  .platform-name {
+    font-size: 1.125rem;
+    font-weight: 650;
+    margin-bottom: 1rem;
+    letter-spacing: -0.01em;
+  }
+
+  .platform-downloads {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .download-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    border-radius: var(--radius-xs);
+    font-size: 0.875rem;
+    font-weight: 500;
+    background: var(--gradient-primary);
+    color: #fff;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .download-link::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .download-link:hover::before {
+    opacity: 1;
+  }
+
+  .download-link:hover {
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+    transform: translateY(-2px);
+  }
+
+  .download-ext {
+    font-size: 0.75rem;
+    opacity: 0.8;
+  }
+
+  .platform-extra {
+    border-top: 1px solid var(--color-border);
+    padding-top: 1rem;
+    text-align: left;
+  }
+
+  .extra-label {
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  /* macOS security tip */
+  .macos-tip {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .tip-icon {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .tip-icon {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+    }
+  }
+
+  .tip-title {
+    font-size: 0.875rem;
+    font-weight: 650;
+    margin-bottom: 0.25rem;
+  }
+
+  .tip-desc {
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin-bottom: 0.625rem;
+  }
+
+  .tip-commands {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  .tip-commands .code-block {
+    font-size: 0.8125rem;
+    padding: 0.625rem 1rem;
+  }
+
+  /* Docker section */
+  .docker-section {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 2rem;
+  }
+
+  .docker-content {
+    display: flex;
+    gap: 1rem;
+    flex: 1;
+  }
+
+  .docker-icon {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: var(--color-bg-secondary);
+    color: var(--color-accent);
+  }
+
+  .docker-text h3 {
+    font-size: 1rem;
+    font-weight: 650;
+    margin-bottom: 0.25rem;
+  }
+
+  .docker-text p {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+  }
+
+  .docker-commands {
+    flex-shrink: 0;
+    width: 320px;
+  }
+
+  .docker-hint {
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    margin-top: 0.5rem;
+  }
+
+  .docker-hint code {
+    font-family: var(--font-mono);
+    color: var(--color-accent);
+    font-size: 0.8125rem;
+  }
+
+  @media (max-width: 900px) {
+    .platform-grid {
+      grid-template-columns: 1fr;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .docker-section {
+      flex-direction: column;
+    }
+
+    .docker-commands {
+      width: 100%;
+    }
+  }
+</style>

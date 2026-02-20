@@ -1,0 +1,539 @@
+---
+const slides = [
+  {
+    id: 'editor',
+    zh: '编辑器',
+    en: 'Editor',
+    lightImg: '/screenshots/editor-light.png',
+    darkImg: '/screenshots/editor-dark.png',
+    zh_title: '所见即所得',
+    en_title: 'What You See Is What You Get',
+    zh_desc: '左右分栏实时预览，拖拽分割线自由调整，沉浸式 Markdown 编辑体验。',
+    en_desc: 'Side-by-side live preview with draggable splitter. An immersive Markdown editing experience.',
+  },
+  {
+    id: 'document',
+    zh: '类公文',
+    en: 'Document',
+    lightImg: '/screenshots/document-light.png',
+    darkImg: '/screenshots/document-dark.png',
+    zh_title: '专业文档排版',
+    en_title: 'Professional Document Layout',
+    zh_desc: '符合 GB/T 9704-2012 标准的类公文排版，支持标题、作者、日期等元素。',
+    en_desc: 'Official document typesetting following GB/T 9704-2012, with title, author, date support.',
+  },
+  {
+    id: 'lesson',
+    zh: '教案',
+    en: 'Lesson Plan',
+    lightImg: '/screenshots/lesson-light.png',
+    darkImg: '/screenshots/lesson-dark.png',
+    zh_title: '教案模板',
+    en_title: 'Lesson Plan Template',
+    zh_desc: '将 Markdown 格式的实操教案转换为标准表格排版，适合教学场景。',
+    en_desc: 'Convert Markdown lesson plans into standard table layouts, perfect for teaching.',
+  },
+  {
+    id: 'batch',
+    zh: '批量转换',
+    en: 'Batch',
+    lightImg: '/screenshots/batch-light.png',
+    darkImg: '/screenshots/batch-dark.png',
+    zh_title: '一键批量导出',
+    en_title: 'One-Click Batch Export',
+    zh_desc: '拖拽多个文件或 ZIP 包，选择模板，一键批量转换为 PDF 并打包下载。',
+    en_desc: 'Drag multiple files or ZIPs, pick a template, batch convert to PDF with one click.',
+  },
+  {
+    id: 'templates',
+    zh: '模板',
+    en: 'Templates',
+    lightImg: '/screenshots/templates-light.png',
+    darkImg: '/screenshots/templates-dark.png',
+    zh_title: '模板管理',
+    en_title: 'Template Management',
+    zh_desc: '管理内置和社区模板，支持搜索、安装、卸载和从 ZIP 导入。',
+    en_desc: 'Manage built-in and community templates. Search, install, uninstall, import from ZIP.',
+  },
+];
+---
+
+<section class="showcase section" id="showcase">
+  <div class="container">
+    <div class="showcase-header animate-on-scroll">
+      <div class="section-label">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        <span class="zh">产品展示</span>
+        <span class="en">Showcase</span>
+      </div>
+      <h2 class="section-title">
+        <span class="zh">简洁强大的<span class="gradient-text">界面</span></span>
+        <span class="en">A Clean & <span class="gradient-text">Powerful</span> Interface</span>
+      </h2>
+      <p class="section-desc">
+        <span class="zh">桌面端原生体验，支持亮色和暗色主题跟随系统切换。</span>
+        <span class="en">Native desktop experience with light and dark themes that follow your system.</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- Carousel (full-width, overflow hidden) -->
+  <div class="carousel animate-on-scroll" id="showcase-carousel" style="transition-delay: 0.15s">
+    <div class="carousel-track" id="carousel-track">
+      {slides.map((s, i) => (
+        <div class="carousel-slide" data-index={i}>
+          <div class="slide-inner">
+            <div class="slide-text">
+              <span class="slide-tag">
+                <span class="zh">{s.zh}</span>
+                <span class="en">{s.en}</span>
+              </span>
+              <h3 class="slide-title">
+                <span class="zh">{s.zh_title}</span>
+                <span class="en">{s.en_title}</span>
+              </h3>
+              <p class="slide-desc">
+                <span class="zh">{s.zh_desc}</span>
+                <span class="en">{s.en_desc}</span>
+              </p>
+            </div>
+            <div class="slide-image">
+              <img
+                class="slide-img light-img"
+                src={s.lightImg}
+                alt={s.en}
+                loading="lazy"
+              />
+              <img
+                class="slide-img dark-img"
+                src={s.darkImg}
+                alt={s.en}
+                loading="lazy"
+              />
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Controls -->
+    <div class="carousel-controls">
+      <button class="carousel-pause" id="carousel-pause" aria-label="Pause">
+        <svg class="icon-pause" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <rect x="5" y="3" width="5" height="18" rx="1"/>
+          <rect x="14" y="3" width="5" height="18" rx="1"/>
+        </svg>
+        <svg class="icon-play" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="display:none">
+          <polygon points="6,3 20,12 6,21"/>
+        </svg>
+      </button>
+      <div class="carousel-dots" id="carousel-dots">
+        {slides.map((_, i) => (
+          <button
+            class={`carousel-dot ${i === 0 ? 'is-active' : ''}`}
+            data-dot={i}
+            aria-label={`Slide ${i + 1}`}
+          >
+            <span class="dot-progress"></span>
+          </button>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+(function () {
+  var track = document.getElementById('carousel-track');
+  var pauseBtn = document.getElementById('carousel-pause');
+  var dotsWrap = document.getElementById('carousel-dots');
+  if (!track || !pauseBtn || !dotsWrap) return;
+
+  var slides = track.querySelectorAll('.carousel-slide');
+  var dots = dotsWrap.querySelectorAll('.carousel-dot');
+  var total = slides.length;
+  var current = 0;
+  var interval = 5000;
+  var timer = null;
+  var paused = false;
+  var startTime = 0;
+  var rafId = null;
+
+  function goTo(idx, animate) {
+    current = ((idx % total) + total) % total;
+    var offset = current * -100;
+    track.style.transition = animate !== false ? 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)' : 'none';
+    track.style.transform = 'translateX(' + offset + '%)';
+    for (var i = 0; i < dots.length; i++) {
+      dots[i].classList.toggle('is-active', i === current);
+      var prog = dots[i].querySelector('.dot-progress');
+      if (prog) {
+        prog.style.transition = 'none';
+        prog.style.width = '0%';
+      }
+    }
+  }
+
+  function startProgress() {
+    startTime = Date.now();
+    cancelAnimationFrame(rafId);
+    var activeDot = dots[current];
+    var prog = activeDot ? activeDot.querySelector('.dot-progress') : null;
+    if (!prog) return;
+    prog.style.transition = 'none';
+    prog.style.width = '0%';
+    function tick() {
+      if (paused) return;
+      var elapsed = Date.now() - startTime;
+      var pct = Math.min((elapsed / interval) * 100, 100);
+      prog.style.width = pct + '%';
+      if (pct < 100) {
+        rafId = requestAnimationFrame(tick);
+      }
+    }
+    rafId = requestAnimationFrame(tick);
+  }
+
+  function startAuto() {
+    stopAuto();
+    startProgress();
+    timer = setTimeout(function () {
+      goTo(current + 1, true);
+      startAuto();
+    }, interval);
+  }
+
+  function stopAuto() {
+    clearTimeout(timer);
+    cancelAnimationFrame(rafId);
+    timer = null;
+  }
+
+  /* Pause / Play */
+  pauseBtn.addEventListener('click', function () {
+    paused = !paused;
+    var iconPause = pauseBtn.querySelector('.icon-pause');
+    var iconPlay = pauseBtn.querySelector('.icon-play');
+    if (paused) {
+      stopAuto();
+      iconPause.style.display = 'none';
+      iconPlay.style.display = 'block';
+    } else {
+      iconPause.style.display = 'block';
+      iconPlay.style.display = 'none';
+      startAuto();
+    }
+  });
+
+  /* Dot click */
+  for (var i = 0; i < dots.length; i++) {
+    (function (idx) {
+      dots[idx].addEventListener('click', function () {
+        if (idx === current) return;
+        goTo(idx, true);
+        if (!paused) startAuto();
+      });
+    })(i);
+  }
+
+  /* Touch / drag support */
+  var startX = 0, dragging = false, dragDelta = 0;
+
+  track.addEventListener('touchstart', function (e) {
+    startX = e.touches[0].clientX;
+    dragging = true;
+    dragDelta = 0;
+    track.style.transition = 'none';
+  }, { passive: true });
+
+  track.addEventListener('touchmove', function (e) {
+    if (!dragging) return;
+    dragDelta = e.touches[0].clientX - startX;
+    var base = current * -100;
+    var pxToPercent = (dragDelta / track.offsetWidth) * 100;
+    track.style.transform = 'translateX(' + (base + pxToPercent) + '%)';
+  }, { passive: true });
+
+  track.addEventListener('touchend', function () {
+    if (!dragging) return;
+    dragging = false;
+    var threshold = track.offsetWidth * 0.15;
+    if (dragDelta < -threshold && current < total - 1) {
+      goTo(current + 1, true);
+    } else if (dragDelta > threshold && current > 0) {
+      goTo(current - 1, true);
+    } else {
+      goTo(current, true);
+    }
+    if (!paused) startAuto();
+  });
+
+  /* Pause on hover */
+  var carousel = document.getElementById('showcase-carousel');
+  if (carousel) {
+    carousel.addEventListener('mouseenter', function () {
+      if (!paused) stopAuto();
+    });
+    carousel.addEventListener('mouseleave', function () {
+      if (!paused) startAuto();
+    });
+  }
+
+  /* Init */
+  goTo(0, false);
+  startAuto();
+})();
+</script>
+
+<style>
+  .showcase-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .showcase-header .section-desc {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* ============================================
+     CAROUSEL
+     ============================================ */
+
+  .carousel {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+    overflow: hidden;
+    border-radius: var(--radius);
+    padding: 0 1.5rem;
+  }
+
+  .carousel-track {
+    display: flex;
+    will-change: transform;
+  }
+
+  .carousel-slide {
+    flex: 0 0 100%;
+    min-width: 0;
+  }
+
+  .slide-inner {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    align-items: center;
+    gap: 2.5rem;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 2.5rem;
+    min-height: 420px;
+    overflow: hidden;
+  }
+
+  /* --- Slide text --- */
+
+  .slide-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+
+  .slide-tag {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    background: rgba(59, 130, 246, 0.08);
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .slide-tag {
+      background: rgba(96, 165, 250, 0.12);
+    }
+  }
+
+  .slide-title {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 750;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    color: var(--color-text);
+  }
+
+  .slide-desc {
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+    line-height: 1.65;
+  }
+
+  /* --- Slide image --- */
+
+  .slide-image {
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s ease;
+  }
+
+  .slide-inner:hover .slide-image {
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: var(--card-shadow-hover);
+  }
+
+  .slide-img {
+    width: 100%;
+    display: block;
+  }
+
+  .light-img { display: block; }
+  .dark-img { display: none; }
+
+  @media (prefers-color-scheme: dark) {
+    .light-img { display: none; }
+    .dark-img { display: block; }
+  }
+
+  /* ============================================
+     CONTROLS — pause button + progress dots
+     ============================================ */
+
+  .carousel-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+    margin-top: 1.75rem;
+    padding-bottom: 0.5rem;
+  }
+
+  /* Pause / Play button */
+  .carousel-pause {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+    transition: all 0.25s ease;
+  }
+
+  .carousel-pause:hover {
+    color: var(--color-text);
+    background: var(--color-bg-elevated);
+    border-color: var(--color-text-muted);
+    transform: scale(1.08);
+  }
+
+  /* Dots container */
+  .carousel-dots {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    padding: 0.375rem 0.625rem;
+  }
+
+  /* Individual dot */
+  .carousel-dot {
+    position: relative;
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--color-text-muted);
+    opacity: 0.35;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    padding: 0;
+  }
+
+  .carousel-dot:hover {
+    opacity: 0.6;
+  }
+
+  .carousel-dot.is-active {
+    width: 32px;
+    opacity: 1;
+    background: var(--color-border);
+  }
+
+  /* Progress bar inside active dot */
+  .dot-progress {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0%;
+    background: var(--color-accent);
+    border-radius: 999px;
+  }
+
+  /* ============================================
+     RESPONSIVE
+     ============================================ */
+
+  @media (max-width: 768px) {
+    .carousel {
+      padding: 0 1rem;
+    }
+
+    .slide-inner {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      padding: 1.5rem;
+      min-height: auto;
+    }
+
+    .slide-text {
+      text-align: center;
+      align-items: center;
+    }
+
+    .slide-title {
+      font-size: 1.375rem;
+    }
+
+    .slide-desc {
+      font-size: 0.9375rem;
+    }
+
+    .carousel-dot.is-active {
+      width: 24px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .slide-inner {
+      padding: 1.25rem;
+    }
+  }
+
+  /* ============================================
+     REDUCED MOTION
+     ============================================ */
+
+  @media (prefers-reduced-motion: reduce) {
+    .carousel-track {
+      transition: none !important;
+    }
+    .slide-image {
+      transition: none !important;
+    }
+    .dot-progress {
+      transition: none !important;
+    }
+  }
+</style>

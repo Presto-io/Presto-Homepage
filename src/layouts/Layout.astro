@@ -1,0 +1,58 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Presto – Markdown to PDF',
+  description = 'Markdown 到 PDF 文档转换平台，基于 Typst 排版引擎。',
+} = Astro.props;
+---
+
+<html lang="zh">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#2563eb" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" type="image/x-icon" href="/icons/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <title>{title}</title>
+    <!-- i18n: detect language before render to avoid FOUC -->
+    <script is:inline>
+      (function () {
+        var stored = localStorage.getItem('presto-lang');
+        var lang = stored || (navigator.language.startsWith('zh') ? 'zh' : 'en');
+        document.documentElement.lang = lang;
+      })();
+    </script>
+  </head>
+  <body>
+    <slot />
+    <!-- Scroll animation observer -->
+    <script is:inline>
+      document.addEventListener('DOMContentLoaded', function () {
+        var els = document.querySelectorAll('.animate-on-scroll');
+        if (!('IntersectionObserver' in window)) {
+          els.forEach(function (el) { el.classList.add('is-visible'); });
+          return;
+        }
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.05, rootMargin: '0px 0px -20px 0px' });
+        els.forEach(function (el) { observer.observe(el); });
+      });
+    </script>
+  </body>
+</html>

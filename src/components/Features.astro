@@ -1,0 +1,177 @@
+---
+const features = [
+  {
+    icon: 'preview',
+    zh: { title: '实时预览', desc: 'CodeMirror 6 编辑器实时编辑，右侧即时渲染 SVG 预览排版效果。所见即所得。' },
+    en: { title: 'Live Preview', desc: 'Edit with CodeMirror 6 and see your document rendered as SVG in real time. What you see is what you get.' },
+  },
+  {
+    icon: 'pdf',
+    zh: { title: '一键导出 PDF', desc: '点击按钮或 ⌘E 快捷键，立即导出专业排版的 PDF 文档。' },
+    en: { title: 'One-Click PDF', desc: 'Click the export button or press ⌘E to instantly export a professionally typeset PDF.' },
+  },
+  {
+    icon: 'template',
+    zh: { title: '模板系统', desc: '内置公文、教案等专业模板，支持社区第三方模板浏览和安装。' },
+    en: { title: 'Template System', desc: 'Built-in professional templates for official documents and lesson plans. Community templates supported.' },
+  },
+  {
+    icon: 'batch',
+    zh: { title: '批量转换', desc: '一次导入并转换多个 Markdown 文件，支持拖拽和 ZIP 压缩包。' },
+    en: { title: 'Batch Convert', desc: 'Import and convert multiple Markdown files at once. Drag & drop and ZIP archives supported.' },
+  },
+  {
+    icon: 'drag',
+    zh: { title: '拖放导入', desc: '拖拽 .md、.txt 文件或 .zip 包到窗口即可打开或批量导入。' },
+    en: { title: 'Drag & Drop', desc: 'Drop .md, .txt files or .zip packages onto the window to open or batch import instantly.' },
+  },
+  {
+    icon: 'yaml',
+    zh: { title: 'YAML 元数据', desc: '通过 YAML front matter 配置标题、作者、日期等文档元数据。' },
+    en: { title: 'YAML Metadata', desc: 'Configure title, author, date and other document metadata via YAML front matter.' },
+  },
+];
+
+const iconPaths = {
+  preview: 'M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8zm0 0 M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z',
+  pdf: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z M14 2v6h6 M12 18v-6 M9 15l3 3 3-3',
+  template: 'M3 3h7v7H3z M14 3h7v4h-7z M14 10h7v11h-7z M3 13h7v8H3z',
+  batch: 'M8 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2 M9 2h6v4H9z M9 14l2 2 4-4',
+  drag: 'M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5 M2 2l7.586 7.586',
+  yaml: 'M16 18l6-6-6-6 M8 6l-6 6 6 6 M14.5 4l-5 16',
+};
+---
+
+<section class="features section" id="features">
+  <div class="container">
+    <div class="features-header animate-on-scroll">
+      <div class="section-label">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <span class="zh">核心功能</span>
+        <span class="en">Core Features</span>
+      </div>
+      <h2 class="section-title">
+        <span class="zh">一切围绕<span class="gradient-text">效率</span>设计</span>
+        <span class="en">Designed for <span class="gradient-text">Efficiency</span></span>
+      </h2>
+      <p class="section-desc">
+        <span class="zh">从编辑到导出，每一步都经过精心打磨。无需复杂配置，开箱即用。</span>
+        <span class="en">From editing to export, every step is carefully crafted. No complex setup needed — works out of the box.</span>
+      </p>
+    </div>
+
+    <div class="features-grid">
+      {features.map((f, i) => (
+        <div class="feature-card animate-on-scroll" style={`transition-delay: ${i * 0.08}s`}>
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d={iconPaths[f.icon]} />
+            </svg>
+          </div>
+          <h3 class="feature-title">
+            <span class="zh">{f.zh.title}</span>
+            <span class="en">{f.en.title}</span>
+          </h3>
+          <p class="feature-desc">
+            <span class="zh">{f.zh.desc}</span>
+            <span class="en">{f.en.desc}</span>
+          </p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .features-header {
+    text-align: center;
+    margin-bottom: 3.5rem;
+  }
+
+  .features-header .section-desc {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+
+  .feature-card {
+    padding: 1.75rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--card-border);
+    background: var(--card-bg);
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--gradient-primary);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .feature-card:hover::before {
+    transform: scaleX(1);
+  }
+
+  .feature-card:hover {
+    box-shadow: var(--card-shadow-hover);
+    border-color: var(--color-border);
+    transform: translateY(-4px);
+  }
+
+  .feature-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--gradient-primary);
+    color: #ffffff;
+    margin-bottom: 1rem;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.35s ease;
+  }
+
+  .feature-card:hover .feature-icon {
+    transform: scale(1.1) rotate(-3deg);
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+  }
+
+  .feature-title {
+    font-size: 1.0625rem;
+    font-weight: 650;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.01em;
+  }
+
+  .feature-desc {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 900px) {
+    .features-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 560px) {
+    .features-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
