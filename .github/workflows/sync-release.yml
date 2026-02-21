@@ -37,6 +37,14 @@ jobs:
           echo "name=$(jq -r .name release.json)" >> "$GITHUB_OUTPUT"
           echo "prerelease=$(jq -r .prerelease release.json)" >> "$GITHUB_OUTPUT"
 
+      - name: Download assets from Presto
+        env:
+          GH_TOKEN: ${{ secrets.PRESTO_PAT }}
+          TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          mkdir -p assets
+          gh release download "$TAG" --repo Presto-io/Presto --dir assets
+
       - name: Create release in this repo
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -48,4 +56,4 @@ jobs:
           if [ "$(jq -r .prerelease release.json)" = "true" ]; then
             ARGS+=(--prerelease)
           fi
-          gh release create "$TAG" "${ARGS[@]}"
+          gh release create "$TAG" "${ARGS[@]}" assets/*
