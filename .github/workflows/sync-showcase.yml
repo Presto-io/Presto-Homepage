@@ -1,0 +1,35 @@
+name: Sync Showcase
+
+on:
+  # Presto 仓库构建完成后通过 repository_dispatch 触发
+  repository_dispatch:
+    types: [showcase-updated]
+  # 手动触发
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download showcase artifact from Presto
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          repo: Presto-io/Presto
+          workflow: build-showcase.yml
+          name: showcase-static
+          path: public/showcase
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/showcase/
+          if git diff --cached --quiet; then
+            echo "No changes to showcase files"
+            exit 0
+          fi
+          git commit -m "chore: sync showcase static files from Presto"
+          git push
