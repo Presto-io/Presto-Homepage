@@ -1,64 +1,54 @@
 ---
 const slides = [
   {
-    id: 'editor',
-    zh: '编辑器',
-    en: 'Editor',
-    lightImg: '/screenshots/editor-light.png',
-    darkImg: '/screenshots/editor-dark.png',
+    id: 'editor-gongwen',
+    zh: '编辑器 · 公文',
+    en: 'Editor · Document',
+    iframeSrc: '/showcase/editor-gongwen',
     zh_title: '所见即所得',
     en_title: 'What You See Is What You Get',
     zh_desc: '左右分栏实时预览，拖拽分割线自由调整，沉浸式 Markdown 编辑体验。',
     en_desc: 'Side-by-side live preview with draggable splitter. An immersive Markdown editing experience.',
-    focus: '50% 25%',
   },
   {
-    id: 'document',
-    zh: '类公文',
-    en: 'Document',
-    lightImg: '/screenshots/document-light.png',
-    darkImg: '/screenshots/document-dark.png',
-    zh_title: '专业文档排版',
-    en_title: 'Professional Document Layout',
-    zh_desc: '符合 GB/T 9704-2012 标准的类公文排版，支持标题、作者、日期等元素。',
-    en_desc: 'Official document typesetting following GB/T 9704-2012, with title, author, date support.',
-    focus: '65% 20%',
-  },
-  {
-    id: 'lesson',
-    zh: '教案',
-    en: 'Lesson Plan',
-    lightImg: '/screenshots/lesson-light.png',
-    darkImg: '/screenshots/lesson-dark.png',
+    id: 'editor-jiaoan',
+    zh: '编辑器 · 教案',
+    en: 'Editor · Lesson Plan',
+    iframeSrc: '/showcase/editor-jiaoan',
     zh_title: '教案模板',
     en_title: 'Lesson Plan Template',
     zh_desc: '将 Markdown 格式的实操教案转换为标准表格排版，适合教学场景。',
     en_desc: 'Convert Markdown lesson plans into standard table layouts, perfect for teaching.',
-    focus: '60% 15%',
   },
   {
     id: 'batch',
     zh: '批量转换',
     en: 'Batch',
-    lightImg: '/screenshots/batch-light.png',
-    darkImg: '/screenshots/batch-dark.png',
+    iframeSrc: '/showcase/batch',
     zh_title: '一键批量导出',
     en_title: 'One-Click Batch Export',
     zh_desc: '拖拽多个文件或 ZIP 包，选择模板，一键批量转换为 PDF 并打包下载。',
     en_desc: 'Drag multiple files or ZIPs, pick a template, batch convert to PDF with one click.',
-    focus: '50% 30%',
   },
   {
     id: 'templates',
     zh: '模板',
     en: 'Templates',
-    lightImg: '/screenshots/templates-light.png',
-    darkImg: '/screenshots/templates-dark.png',
+    iframeSrc: '/showcase/templates',
     zh_title: '模板管理',
     en_title: 'Template Management',
     zh_desc: '管理内置和社区模板，支持搜索、安装、卸载和从 ZIP 导入。',
     en_desc: 'Manage built-in and community templates. Search, install, uninstall, import from ZIP.',
-    focus: '50% 25%',
+  },
+  {
+    id: 'drop',
+    zh: '拖入文件',
+    en: 'Drag & Drop',
+    iframeSrc: '/showcase/drop',
+    zh_title: '拖拽导入',
+    en_title: 'Drag & Drop Import',
+    zh_desc: '将 Markdown 文件直接拖入窗口，自动检测模板并开始转换。',
+    en_desc: 'Drag Markdown files into the window. Auto-detect templates and start converting.',
   },
 ];
 ---
@@ -104,18 +94,13 @@ const slides = [
                 </p>
               </div>
               <div class="slide-image">
-                <img
-                  class="slide-img light-img"
-                  src={s.lightImg}
-                  alt={s.en}
+                <iframe
+                  src={s.iframeSrc}
                   loading="lazy"
-                />
-                <img
-                  class="slide-img dark-img"
-                  src={s.darkImg}
-                  alt={s.en}
-                  loading="lazy"
-                />
+                  sandbox="allow-scripts allow-same-origin"
+                  class="showcase-iframe"
+                  title={s.en}
+                ></iframe>
               </div>
             </div>
           </div>
@@ -291,14 +276,28 @@ const slides = [
   }
 
   /* Recalc on resize */
+  /* Scale showcase iframes to fit container */
+  function scaleIframes() {
+    var containers = document.querySelectorAll('.slide-image');
+    for (var i = 0; i < containers.length; i++) {
+      var iframe = containers[i].querySelector('.showcase-iframe');
+      if (!iframe) continue;
+      var cw = containers[i].offsetWidth;
+      var scale = cw / 1200;
+      iframe.style.transform = 'scale(' + scale + ')';
+      containers[i].style.height = Math.round(800 * scale) + 'px';
+    }
+  }
+
   var resizeTimer;
   window.addEventListener('resize', function () {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(function () { goTo(current, false); }, 100);
+    resizeTimer = setTimeout(function () { goTo(current, false); scaleIframes(); }, 100);
   });
 
   /* Init */
   goTo(0, false);
+  scaleIframes();
   startAuto();
 })();
 </script>
@@ -419,19 +418,20 @@ const slides = [
   .slide-image {
     overflow: hidden;
     position: relative;
+    border-radius: calc(var(--radius) - 2rem);
   }
 
-  .slide-img {
-    width: 100%;
+  .showcase-iframe {
+    width: 1200px;
+    height: 800px;
+    border: none;
     display: block;
+    transform-origin: 0 0;
+    pointer-events: none;
   }
 
-  .light-img { display: block; }
-  .dark-img { display: none; }
-
-  @media (prefers-color-scheme: dark) {
-    .light-img { display: none; }
-    .dark-img { display: block; }
+  .carousel-slide.is-active .showcase-iframe {
+    pointer-events: auto;
   }
 
   /* ============================================
@@ -556,7 +556,7 @@ const slides = [
     .carousel-slide {
       transition: none !important;
     }
-    .slide-img {
+    .showcase-iframe {
       transition: none !important;
     }
     .dot-progress {

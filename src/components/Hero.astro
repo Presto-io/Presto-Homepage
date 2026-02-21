@@ -44,24 +44,35 @@
     </div>
   </div>
 
-  <!-- Hero screenshot -->
+  <!-- Hero showcase -->
   <div class="container">
     <div class="hero-image hero-anim" style="animation-delay: 0.4s">
-      <img
-        class="hero-screenshot light-img"
-        src="/screenshots/editor-light.png"
-        alt="Presto Editor - Light Mode"
+      <iframe
+        src="/showcase/hero"
+        class="hero-iframe"
         loading="eager"
-      />
-      <img
-        class="hero-screenshot dark-img"
-        src="/screenshots/editor-dark.png"
-        alt="Presto Editor - Dark Mode"
-        loading="eager"
-      />
+        title="Presto Editor"
+      ></iframe>
     </div>
   </div>
 </section>
+
+<script is:inline>
+(function () {
+  var container = document.querySelector('.hero-image');
+  var iframe = container ? container.querySelector('.hero-iframe') : null;
+  if (!container || !iframe) return;
+
+  function scaleHero() {
+    var scale = container.offsetWidth / 1200;
+    iframe.style.transform = 'scale(' + scale + ')';
+    container.style.height = Math.round(800 * scale) + 'px';
+  }
+
+  scaleHero();
+  window.addEventListener('resize', scaleHero);
+})();
+</script>
 
 <style>
   .hero {
@@ -188,6 +199,8 @@
     z-index: 1;
     max-width: 1000px;
     margin: 0 auto;
+    overflow: hidden;
+    border-radius: var(--radius);
     filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.12));
     transition: transform 0.4s ease, filter 0.4s ease;
   }
@@ -206,18 +219,12 @@
     }
   }
 
-  .hero-screenshot {
-    width: 100%;
+  .hero-iframe {
+    width: 1200px;
+    height: 800px;
+    border: none;
     display: block;
-  }
-
-  /* Show light screenshot in light mode, dark in dark mode */
-  .light-img { display: block; }
-  .dark-img { display: none; }
-
-  @media (prefers-color-scheme: dark) {
-    .light-img { display: none; }
-    .dark-img { display: block; }
+    transform-origin: 0 0;
   }
 
   @media (max-width: 768px) {
