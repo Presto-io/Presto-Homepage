@@ -49,3 +49,10 @@ npm run preview   # 预览构建产物
 - `Presto-io/Presto`：主应用，提供 showcase 路由
 - `Presto-io/template-registry`：模板注册表，提供商店数据
 - 完整架构设计见 `Presto-architecture.md`
+
+## 工作习惯
+
+- **完成任务后必须立即 commit**：每完成一个逻辑任务，在回复用户之前就要 commit（按任务粒度，不是按文件）
+- Commit 消息用中文，不要自动 push
+- 当用户提出新规范/架构决策时，主动更新本文件
+- 开始任务前先检查当前可用的技能（Skills），优先使用已安装的技能
