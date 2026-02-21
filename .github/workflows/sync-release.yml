@@ -1,0 +1,48 @@
+name: Sync Release from Presto
+
+on:
+  repository_dispatch:
+    types: [release-published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to sync (e.g. v1.0.0)"
+        required: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve tag
+        id: tag
+        run: |
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            echo "tag=${{ github.event.client_payload.tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=${{ github.inputs.tag }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Fetch release from Presto
+        id: release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api repos/Presto-io/Presto/releases/tags/${{ steps.tag.outputs.tag }} \
+            --jq '{name, body, prerelease, draft}' > release.json
+          echo "name=$(jq -r .name release.json)" >> "$GITHUB_OUTPUT"
+          echo "prerelease=$(jq -r .prerelease release.json)" >> "$GITHUB_OUTPUT"
+
+      - name: Create release in this repo
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.tag.outputs.tag }}
+          RELEASE_NAME: ${{ steps.release.outputs.name }}
+        run: |
+          BODY=$(jq -r .body release.json)
+          ARGS=(--title "$RELEASE_NAME" --notes "$BODY")
+          if [ "$(jq -r .prerelease release.json)" = "true" ]; then
+            ARGS+=(--prerelease)
+          fi
+          gh release create "$TAG" "${ARGS[@]}"
