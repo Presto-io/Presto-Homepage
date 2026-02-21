@@ -27,7 +27,7 @@ jobs:
       - name: Fetch release from Presto
         id: release
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.PRESTO_PAT }}
         run: |
           gh api repos/Presto-io/Presto/releases/tags/${{ steps.tag.outputs.tag }} \
             --jq '{name, body, prerelease, draft}' > release.json

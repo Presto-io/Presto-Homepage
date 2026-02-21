@@ -16,7 +16,7 @@ jobs:
       - name: Download showcase artifact from Presto
         uses: dawidd6/action-download-artifact@v6
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.PRESTO_PAT }}
           repo: Presto-io/Presto
           workflow: build-showcase.yml
           name: showcase-static
