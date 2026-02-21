@@ -21,7 +21,7 @@ jobs:
           if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
             echo "tag=${{ github.event.client_payload.tag }}" >> "$GITHUB_OUTPUT"
           else
-            echo "tag=${{ github.inputs.tag }}" >> "$GITHUB_OUTPUT"
+            echo "tag=${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Fetch release from Presto
