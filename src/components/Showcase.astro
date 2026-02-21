@@ -268,6 +268,28 @@ const slides = [
     if (!paused) startAuto();
   });
 
+  /* Trackpad / wheel horizontal swipe */
+  var wheelAccum = 0;
+  var wheelTimer = null;
+  viewport.addEventListener('wheel', function (e) {
+    // Only handle horizontal-dominant gestures
+    if (Math.abs(e.deltaX) < Math.abs(e.deltaY)) return;
+    if (Math.abs(e.deltaX) < 2) return;
+    e.preventDefault();
+    wheelAccum += e.deltaX;
+    clearTimeout(wheelTimer);
+    wheelTimer = setTimeout(function () {
+      var threshold = 50;
+      if (wheelAccum > threshold && current < total - 1) {
+        goTo(current + 1, true);
+      } else if (wheelAccum < -threshold && current > 0) {
+        goTo(current - 1, true);
+      }
+      wheelAccum = 0;
+      if (!paused) startAuto();
+    }, 80);
+  }, { passive: false });
+
   /* Pause on hover */
   var carouselEl = document.getElementById('showcase-carousel');
   if (carouselEl) {
