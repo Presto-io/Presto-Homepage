@@ -16,6 +16,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Clean previous showcase files
+        run: rm -rf public/_app public/showcase
+
       - name: Download showcase artifact from Presto
         uses: dawidd6/action-download-artifact@v6
         with:
@@ -23,13 +26,13 @@ jobs:
           repo: Presto-io/Presto
           workflow: build-showcase.yml
           name: showcase-static
-          path: public/showcase
+          path: public
 
       - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add public/showcase/
+          git add public/_app/ public/showcase/
           if git diff --cached --quiet; then
             echo "No changes to showcase files"
             exit 0
