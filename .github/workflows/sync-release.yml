@@ -56,6 +56,8 @@ jobs:
           if [ "$(jq -r .prerelease release.json)" = "true" ]; then
             ARGS+=(--prerelease)
           fi
+          # Delete existing release if present, then create
+          gh release delete "$TAG" --yes 2>/dev/null || true
           gh release create "$TAG" "${ARGS[@]}" assets/*
 
       - name: Update version in source code
