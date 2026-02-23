@@ -1,0 +1,1289 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+---
+<Layout title="开发者文档 - Presto" description="创建 Presto 模板：将你的排版规范变成可复用的命令行工具。">
+  <Header />
+  <main class="dev-page">
+    <!-- Hero -->
+    <section class="dev-hero">
+      <div class="container">
+        <span class="section-label">
+          <span class="zh">开发者</span>
+          <span class="en">Developers</span>
+        </span>
+        <h1 class="dev-hero-title">
+          <span class="zh">创建 Presto 模板</span>
+          <span class="en">Create Presto Templates</span>
+        </h1>
+        <p class="dev-hero-desc">
+          <span class="zh">将你的排版规范变成可复用的命令行工具。支持 Go、Rust、TypeScript 三种语言，5 分钟发布到模板商店。</span>
+          <span class="en">Turn your typesetting rules into reusable CLI tools. Supports Go, Rust, and TypeScript — publish to the store in 5 minutes.</span>
+        </p>
+        <div class="dev-hero-actions">
+          <a href="#quick-start" class="btn btn-primary">
+            <span class="zh">快速开始</span>
+            <span class="en">Quick Start</span>
+          </a>
+          <a href="https://github.com/Presto-io" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+            GitHub
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 12L12 4M12 4H5M12 4v7"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="dev-section" id="how-it-works">
+      <div class="container">
+        <h2 class="dev-section-title">
+          <span class="zh">工作原理</span>
+          <span class="en">How It Works</span>
+        </h2>
+        <p class="dev-section-desc">
+          <span class="zh">Presto 模板是一个独立的可执行文件，通过 stdin/stdout 将 Markdown 转换为 Typst 排版源码。</span>
+          <span class="en">A Presto template is a standalone binary that converts Markdown to Typst source code via stdin/stdout.</span>
+        </p>
+
+        <div class="flow-diagram">
+          <div class="flow-step">
+            <div class="flow-icon">📝</div>
+            <div class="flow-label">Markdown</div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step flow-step--accent">
+            <div class="flow-icon">⚡</div>
+            <div class="flow-label">
+              <span class="zh">你的模板</span>
+              <span class="en">Your Template</span>
+            </div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="flow-icon">📄</div>
+            <div class="flow-label">Typst</div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="flow-icon">📋</div>
+            <div class="flow-label">PDF</div>
+          </div>
+        </div>
+
+        <div class="protocol-table">
+          <h3>
+            <span class="zh">CLI 协议</span>
+            <span class="en">CLI Protocol</span>
+          </h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>
+                    <span class="zh">调用方式</span>
+                    <span class="en">Usage</span>
+                  </th>
+                  <th>
+                    <span class="zh">行为</span>
+                    <span class="en">Behavior</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>cat doc.md | ./binary</code></td>
+                  <td>
+                    <span class="zh">stdin 读取 Markdown，stdout 输出 Typst 源码</span>
+                    <span class="en">Read Markdown from stdin, output Typst to stdout</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>./binary --manifest</code></td>
+                  <td>
+                    <span class="zh">输出 manifest.json 内容</span>
+                    <span class="en">Output manifest.json contents</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>./binary --example</code></td>
+                  <td>
+                    <span class="zh">输出示例 Markdown 文档</span>
+                    <span class="en">Output example Markdown document</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>./binary --version</code></td>
+                  <td>
+                    <span class="zh">输出版本号</span>
+                    <span class="en">Output version number</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Start -->
+    <section class="dev-section dev-section--alt" id="quick-start">
+      <div class="container">
+        <h2 class="dev-section-title">
+          <span class="zh">快速开始</span>
+          <span class="en">Quick Start</span>
+        </h2>
+        <p class="dev-section-desc">
+          <span class="zh">选择你熟悉的语言，从 Starter 仓库创建你的模板项目。</span>
+          <span class="en">Choose your preferred language and create a template project from a Starter repo.</span>
+        </p>
+
+        <!-- Language Selector -->
+        <div class="lang-cards">
+          <div class="lang-card" data-lang="go">
+            <div class="lang-card-header">
+              <span class="lang-card-name">Go</span>
+              <span class="lang-card-badge">
+                <span class="zh">推荐新手</span>
+                <span class="en">Recommended</span>
+              </span>
+            </div>
+            <p class="lang-card-desc">
+              <span class="zh">交叉编译最简单，<code>GOOS/GOARCH</code> 即可</span>
+              <span class="en">Simplest cross-compilation with <code>GOOS/GOARCH</code></span>
+            </p>
+            <div class="lang-card-stack">
+              <span>goldmark</span>
+              <span>gopkg.in/yaml.v3</span>
+              <span>//go:embed</span>
+            </div>
+          </div>
+          <div class="lang-card" data-lang="rust">
+            <div class="lang-card-header">
+              <span class="lang-card-name">Rust</span>
+            </div>
+            <p class="lang-card-desc">
+              <span class="zh">二进制最小、性能最高</span>
+              <span class="en">Smallest binary, best performance</span>
+            </p>
+            <div class="lang-card-stack">
+              <span>pulldown-cmark</span>
+              <span>serde_yaml</span>
+              <span>include_str!</span>
+            </div>
+          </div>
+          <div class="lang-card" data-lang="ts">
+            <div class="lang-card-header">
+              <span class="lang-card-name">TypeScript</span>
+            </div>
+            <p class="lang-card-desc">
+              <span class="zh">开发体验最好，Bun 编译</span>
+              <span class="en">Best DX, compiled with Bun</span>
+            </p>
+            <div class="lang-card-stack">
+              <span>marked</span>
+              <span>js-yaml</span>
+              <span>bun build --compile</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Steps -->
+        <div class="steps">
+          <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <h3>
+                <span class="zh">创建仓库</span>
+                <span class="en">Create Repository</span>
+              </h3>
+              <p>
+                <span class="zh">在 GitHub 上点击 "Use this template" 创建你的模板仓库：</span>
+                <span class="en">Click "Use this template" on GitHub to create your template repo:</span>
+              </p>
+              <div class="code-block"><code>presto-template-starter-go<br/>presto-template-starter-rust<br/>presto-template-starter-typescript</code></div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <h3>
+                <span class="zh">放入参考文件</span>
+                <span class="en">Add Reference Files</span>
+              </h3>
+              <p>
+                <span class="zh">将你的排版参考文件（PDF、DOCX、图片等）放入 <code>reference/</code> 目录。AI 编程工具可以直接分析这些文件来生成转换代码。</span>
+                <span class="en">Place your typesetting reference files (PDF, DOCX, images, etc.) in the <code>reference/</code> directory. AI coding tools can analyze these files to generate conversion code.</span>
+              </p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <h3>
+                <span class="zh">开发与预览</span>
+                <span class="en">Develop & Preview</span>
+              </h3>
+              <div class="code-block"><code>make preview    <span class="code-comment"># <span class="zh">编译并安装到本地 Presto</span><span class="en">Build and install to local Presto</span></span></code></div>
+              <p>
+                <span class="zh">在 Presto 中实时预览你的模板效果，对照参考文件调整排版。</span>
+                <span class="en">Preview your template live in Presto and adjust typesetting against reference files.</span>
+              </p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+              <h3>
+                <span class="zh">发布</span>
+                <span class="en">Publish</span>
+              </h3>
+              <div class="code-block"><code>git tag v1.0.0 && git push origin main --tags</code></div>
+              <p>
+                <span class="zh">打 tag 推送后，CI 自动编译 6 个平台的二进制并创建 GitHub Release。Registry 每 6 小时自动收录新模板到商店。</span>
+                <span class="en">Push a tag and CI automatically builds binaries for 6 platforms and creates a GitHub Release. The registry indexes new templates every 6 hours.</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- manifest.json -->
+    <section class="dev-section" id="manifest">
+      <div class="container">
+        <h2 class="dev-section-title">manifest.json</h2>
+        <p class="dev-section-desc">
+          <span class="zh">模板的元数据文件，编译时嵌入到二进制中。</span>
+          <span class="en">Template metadata file, embedded into the binary at compile time.</span>
+        </p>
+
+        <div class="code-block code-block--lg"><pre><code set:html={`{
+  "name": "my-template",
+  "displayName": "我的模板",
+  "description": "一句话描述模板用途",
+  "version": "1.0.0",
+  "author": "your-github-username",
+  "license": "MIT",
+  "category": "通用",
+  "keywords": ["报告", "商务"],
+  "minPrestoVersion": "0.1.0",
+  "requiredFonts": [],
+  "frontmatterSchema": {
+    "title": { "type": "string", "default": "请输入标题" },
+    "date":  { "type": "string", "format": "YYYY-MM-DD" }
+  }
+}`} /></pre></div>
+
+        <div class="field-grid">
+          <div class="field-card">
+            <h4>name</h4>
+            <p>
+              <span class="zh">唯一标识符，kebab-case</span>
+              <span class="en">Unique identifier, kebab-case</span>
+            </p>
+          </div>
+          <div class="field-card">
+            <h4>displayName</h4>
+            <p>
+              <span class="zh">显示名称（中文或英文）</span>
+              <span class="en">Display name shown in the store</span>
+            </p>
+          </div>
+          <div class="field-card">
+            <h4>category</h4>
+            <p>
+              <span class="zh">分类标签，自由文本，≤20 字符</span>
+              <span class="en">Category tag, free text, ≤20 chars</span>
+            </p>
+          </div>
+          <div class="field-card">
+            <h4>keywords</h4>
+            <p>
+              <span class="zh">搜索关键词，2-6 个</span>
+              <span class="en">Search keywords, 2-6 items</span>
+            </p>
+          </div>
+          <div class="field-card">
+            <h4>requiredFonts</h4>
+            <p>
+              <span class="zh">所需字体列表（含下载链接）</span>
+              <span class="en">Required fonts (with download URLs)</span>
+            </p>
+          </div>
+          <div class="field-card">
+            <h4>frontmatterSchema</h4>
+            <p>
+              <span class="zh">YAML frontmatter 字段定义</span>
+              <span class="en">YAML frontmatter field definitions</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Security -->
+    <section class="dev-section dev-section--alt" id="security">
+      <div class="container">
+        <h2 class="dev-section-title">
+          <span class="zh">安全模型</span>
+          <span class="en">Security Model</span>
+        </h2>
+        <p class="dev-section-desc">
+          <span class="zh">模板二进制直接在用户机器上运行，Presto 通过三层防护确保安全。</span>
+          <span class="en">Template binaries run directly on user machines. Presto ensures safety with three-layer defense.</span>
+        </p>
+
+        <div class="security-layers">
+          <div class="security-layer">
+            <div class="security-layer-number">1</div>
+            <div class="security-layer-content">
+              <h3>
+                <span class="zh">静态分析</span>
+                <span class="en">Static Analysis</span>
+              </h3>
+              <p>
+                <span class="zh">源码层面检测禁止的 import——不允许网络库、进程执行、动态加载等。</span>
+                <span class="en">Source-level detection of forbidden imports — no networking, process exec, or dynamic loading.</span>
+              </p>
+              <div class="code-block"><code set:html={`<span class="code-comment"># Go</span><br/>go list -f '{{join .Imports "\\n"}}' ./... | grep -E 'net|os/exec|plugin'<br/><br/><span class="code-comment"># Rust</span><br/>cargo tree --prefix none | grep -iE 'reqwest|hyper|tokio|std::net'<br/><br/><span class="code-comment"># TypeScript</span><br/>grep -rE 'node:http|node:net|fetch\\(' src/`} /></div>
+            </div>
+          </div>
+
+          <div class="security-layer">
+            <div class="security-layer-number">2</div>
+            <div class="security-layer-content">
+              <h3>
+                <span class="zh">运行时网络沙箱</span>
+                <span class="en">Runtime Network Sandbox</span>
+              </h3>
+              <p>
+                <span class="zh">操作系统级网络隔离，即使绕过静态分析也无法联网。</span>
+                <span class="en">OS-level network isolation — even if static analysis is bypassed, networking is blocked.</span>
+              </p>
+              <div class="code-block"><code><span class="code-comment"># macOS</span><br/>sandbox-exec -p '(version 1)(allow default)(deny network*)' ./binary<br/><br/><span class="code-comment"># Linux</span><br/>unshare --net ./binary</code></div>
+            </div>
+          </div>
+
+          <div class="security-layer">
+            <div class="security-layer-number">3</div>
+            <div class="security-layer-content">
+              <h3>
+                <span class="zh">输出验证</span>
+                <span class="en">Output Validation</span>
+              </h3>
+              <p>
+                <span class="zh">检测 stdout 输出：禁止 HTML 标签，首行必须是 Typst 指令（<code>#</code> 开头）。</span>
+                <span class="en">Validates stdout output: no HTML tags allowed, first line must be a Typst directive (starts with <code>#</code>).</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="security-rules">
+          <h3>
+            <span class="zh">关键约束</span>
+            <span class="en">Key Constraints</span>
+          </h3>
+          <ul>
+            <li>
+              <span class="zh">禁止访问网络 — 所有资源在编译时嵌入</span>
+              <span class="en">No network access — all resources embedded at compile time</span>
+            </li>
+            <li>
+              <span class="zh">禁止写文件 — 只允许 stdin/stdout I/O</span>
+              <span class="en">No file writes — only stdin/stdout I/O allowed</span>
+            </li>
+            <li>
+              <span class="zh">执行超时 30 秒，二进制大小限制 100MB</span>
+              <span class="en">30-second timeout, 100MB binary size limit</span>
+            </li>
+            <li>
+              <span class="zh">执行环境最小化：<code>PATH=/usr/local/bin:/usr/bin:/bin</code></span>
+              <span class="en">Minimal execution environment: <code>PATH=/usr/local/bin:/usr/bin:/bin</code></span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testing -->
+    <section class="dev-section" id="testing">
+      <div class="container">
+        <h2 class="dev-section-title">
+          <span class="zh">测试与发布</span>
+          <span class="en">Testing & Publishing</span>
+        </h2>
+
+        <div class="cmd-grid">
+          <div class="cmd-card">
+            <div class="cmd-name">make build</div>
+            <p>
+              <span class="zh">编译当前平台二进制</span>
+              <span class="en">Build binary for current platform</span>
+            </p>
+          </div>
+          <div class="cmd-card">
+            <div class="cmd-name">make preview</div>
+            <p>
+              <span class="zh">编译并安装到本地 Presto 预览</span>
+              <span class="en">Build and install to local Presto</span>
+            </p>
+          </div>
+          <div class="cmd-card">
+            <div class="cmd-name">make test</div>
+            <p>
+              <span class="zh">安全测试 + 功能测试（CI 使用）</span>
+              <span class="en">Security tests + functional tests (for CI)</span>
+            </p>
+          </div>
+          <div class="cmd-card">
+            <div class="cmd-name">make test-security</div>
+            <p>
+              <span class="zh">仅运行安全测试</span>
+              <span class="en">Run security tests only</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="publish-info">
+          <h3>
+            <span class="zh">发布流程</span>
+            <span class="en">Publishing</span>
+          </h3>
+          <div class="code-block"><code>git add -A && git commit -m "feat: initial template"<br/>git tag v1.0.0<br/>git push origin main --tags</code></div>
+          <p>
+            <span class="zh">CI 会自动编译以下 6 个平台的二进制，生成 SHA256SUMS 校验文件，并创建 GitHub Release：</span>
+            <span class="en">CI automatically builds binaries for 6 platforms, generates SHA256SUMS checksums, and creates a GitHub Release:</span>
+          </p>
+          <div class="platform-grid">
+            <span class="platform-badge">darwin/arm64</span>
+            <span class="platform-badge">darwin/amd64</span>
+            <span class="platform-badge">linux/arm64</span>
+            <span class="platform-badge">linux/amd64</span>
+            <span class="platform-badge">windows/arm64</span>
+            <span class="platform-badge">windows/amd64</span>
+          </div>
+        </div>
+
+        <div class="trust-info">
+          <h3>
+            <span class="zh">信任标识</span>
+            <span class="en">Trust Levels</span>
+          </h3>
+          <p>
+            <span class="zh">模板在商店中会显示信任标识，由 Registry 自动判定：</span>
+            <span class="en">Templates display trust badges in the store, determined automatically by the Registry:</span>
+          </p>
+          <div class="trust-grid">
+            <div class="trust-item">
+              <span class="trust-badge trust-badge--official">Official</span>
+              <span>
+                <span class="zh">Presto-io 组织发布</span>
+                <span class="en">Published by Presto-io org</span>
+              </span>
+            </div>
+            <div class="trust-item">
+              <span class="trust-badge trust-badge--verified">Verified</span>
+              <span>
+                <span class="zh">SHA256SUMS 有有效 GPG 签名</span>
+                <span class="en">SHA256SUMS has valid GPG signature</span>
+              </span>
+            </div>
+            <div class="trust-item">
+              <span class="trust-badge trust-badge--community">Community</span>
+              <span>
+                <span class="zh">已收录，未审核</span>
+                <span class="en">Listed, not audited</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Project Structure -->
+    <section class="dev-section dev-section--alt" id="structure">
+      <div class="container">
+        <h2 class="dev-section-title">
+          <span class="zh">项目结构</span>
+          <span class="en">Project Structure</span>
+        </h2>
+
+        <div class="code-block code-block--lg"><pre><code>my-template/
+  reference/              <span class="code-comment"><span class="zh">← 参考文件（PDF、DOCX 等）</span><span class="en">← Reference files (PDF, DOCX, etc.)</span></span>
+  main.go                 <span class="code-comment"><span class="zh">← 核心转换逻辑</span><span class="en">← Core conversion logic</span></span>
+  manifest.json           <span class="code-comment"><span class="zh">← 模板元数据</span><span class="en">← Template metadata</span></span>
+  example.md              <span class="code-comment"><span class="zh">← 示例输入文档</span><span class="en">← Example input document</span></span>
+  Makefile                <span class="code-comment">← build / preview / test / clean</span>
+  .github/workflows/
+    release.yml           <span class="code-comment"><span class="zh">← 6 平台自动构建</span><span class="en">← 6-platform auto build</span></span>
+  README.md               <span class="code-comment"><span class="zh">← 模板说明文档</span><span class="en">← Template documentation</span></span></code></pre></div>
+
+        <p class="structure-note">
+          <span class="zh">Starter 仓库已配置好 CI、Makefile 和 AI 工具的配置文件（CLAUDE.md、AGENTS.md、.cursor/rules），让你专注于排版逻辑。</span>
+          <span class="en">Starter repos come pre-configured with CI, Makefile, and AI tool configs (CLAUDE.md, AGENTS.md, .cursor/rules), so you can focus on typesetting logic.</span>
+        </p>
+      </div>
+    </section>
+
+    <!-- AI-Assisted Development -->
+    <section class="dev-section" id="ai-assisted">
+      <div class="container">
+        <h2 class="dev-section-title">
+          <span class="zh">AI 辅助开发</span>
+          <span class="en">AI-Assisted Development</span>
+        </h2>
+        <p class="dev-section-desc">
+          <span class="zh">Starter 仓库内置了多 AI 工具的配置文件，指向统一的开发规范。你可以用任何 AI 编程工具来开发模板。</span>
+          <span class="en">Starter repos include configs for multiple AI coding tools, all pointing to unified conventions. Use any AI tool you prefer.</span>
+        </p>
+
+        <div class="ai-grid">
+          <div class="ai-card">
+            <div class="ai-card-name">Claude Code</div>
+            <div class="ai-card-file">CLAUDE.md</div>
+          </div>
+          <div class="ai-card">
+            <div class="ai-card-name">OpenAI Codex</div>
+            <div class="ai-card-file">AGENTS.md</div>
+          </div>
+          <div class="ai-card">
+            <div class="ai-card-name">Cursor</div>
+            <div class="ai-card-file">.cursor/rules</div>
+          </div>
+        </div>
+
+        <p class="ai-note">
+          <span class="zh">开发流程：放入参考文件 → AI 分析排版特征 → 确认参数 → 生成代码 → <code>make preview</code> → 迭代调整。</span>
+          <span class="en">Workflow: add reference files → AI analyzes typesetting → confirm parameters → generate code → <code>make preview</code> → iterate.</span>
+        </p>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="dev-cta">
+      <div class="container">
+        <h2>
+          <span class="zh">开始创建你的模板</span>
+          <span class="en">Start Building Your Template</span>
+        </h2>
+        <p>
+          <span class="zh">从 Starter 仓库开始，5 分钟内发布你的第一个模板。</span>
+          <span class="en">Start from a Starter repo and publish your first template in 5 minutes.</span>
+        </p>
+        <div class="dev-cta-actions">
+          <a href="https://github.com/Presto-io" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+            <span class="zh">浏览 Starter 仓库</span>
+            <span class="en">Browse Starter Repos</span>
+          </a>
+          <a href="/templates" class="btn btn-secondary">
+            <span class="zh">查看模板商店</span>
+            <span class="en">View Template Store</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  /* ============================================
+     PAGE LAYOUT
+     ============================================ */
+
+  .dev-page {
+    padding-top: 72px;
+  }
+
+  .dev-section {
+    padding: 5rem 0;
+  }
+
+  .dev-section--alt {
+    background: var(--color-bg-secondary);
+  }
+
+  .dev-section-title {
+    font-size: clamp(1.5rem, 3.5vw, 2rem);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    margin-bottom: 0.75rem;
+  }
+
+  .dev-section-desc {
+    font-size: 1.0625rem;
+    color: var(--color-text-secondary);
+    max-width: 640px;
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
+  }
+
+  /* ============================================
+     HERO
+     ============================================ */
+
+  .dev-hero {
+    padding: 6rem 0 4rem;
+    background: var(--hero-bg);
+  }
+
+  .dev-hero-title {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin-bottom: 1.25rem;
+    background: var(--gradient-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .dev-hero-desc {
+    font-size: 1.125rem;
+    color: var(--color-text-secondary);
+    max-width: 580px;
+    line-height: 1.7;
+    margin-bottom: 2rem;
+  }
+
+  .dev-hero-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  /* ============================================
+     FLOW DIAGRAM
+     ============================================ */
+
+  .flow-diagram {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+  }
+
+  .flow-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1.25rem 1.5rem;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--card-shadow);
+    min-width: 100px;
+  }
+
+  .flow-step--accent {
+    border-color: var(--color-accent);
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(139, 92, 246, 0.05));
+  }
+
+  .flow-icon {
+    font-size: 1.5rem;
+  }
+
+  .flow-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+  }
+
+  .flow-arrow {
+    font-size: 1.25rem;
+    color: var(--color-text-muted);
+    font-weight: 600;
+  }
+
+  /* ============================================
+     PROTOCOL TABLE
+     ============================================ */
+
+  .protocol-table {
+    margin-top: 2rem;
+  }
+
+  .protocol-table h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+  }
+
+  th {
+    text-align: left;
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-text-muted);
+    background: var(--color-bg-secondary);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  td code,
+  p code {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    background: var(--code-bg);
+    padding: 0.125rem 0.375rem;
+    border-radius: 4px;
+    color: var(--code-text);
+  }
+
+  /* ============================================
+     LANGUAGE CARDS
+     ============================================ */
+
+  .lang-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+
+  .lang-card {
+    padding: 1.25rem;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--card-shadow);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .lang-card:hover {
+    border-color: var(--color-accent);
+    box-shadow: var(--card-shadow-hover);
+  }
+
+  .lang-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .lang-card-name {
+    font-size: 1.125rem;
+    font-weight: 700;
+  }
+
+  .lang-card-badge {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    padding: 0.125rem 0.5rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+    color: var(--color-accent);
+  }
+
+  .lang-card-desc {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
+  }
+
+  .lang-card-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+  }
+
+  .lang-card-stack span {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    padding: 0.125rem 0.5rem;
+    background: var(--code-bg);
+    color: var(--code-text);
+    border-radius: 4px;
+  }
+
+  /* ============================================
+     STEPS
+     ============================================ */
+
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .step {
+    display: flex;
+    gap: 1.25rem;
+  }
+
+  .step-number {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    background: var(--gradient-primary);
+    color: #fff;
+    border-radius: 50%;
+  }
+
+  .step-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .step-content h3 {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .step-content p {
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+  }
+
+  .step-content .code-block {
+    margin-bottom: 0.75rem;
+  }
+
+  /* ============================================
+     MANIFEST FIELDS
+     ============================================ */
+
+  .field-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .field-card {
+    padding: 1rem;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-xs);
+  }
+
+  .field-card h4 {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    margin-bottom: 0.375rem;
+  }
+
+  .field-card p {
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+  }
+
+  /* ============================================
+     SECURITY LAYERS
+     ============================================ */
+
+  .security-layers {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .security-layer {
+    display: flex;
+    gap: 1.25rem;
+  }
+
+  .security-layer-number {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+    border-radius: 50%;
+  }
+
+  .security-layer-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .security-layer-content h3 {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .security-layer-content p {
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+  }
+
+  .security-rules {
+    padding: 1.5rem;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+  }
+
+  .security-rules h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+
+  .security-rules ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .security-rules li {
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+    padding-left: 1.25rem;
+    position: relative;
+    line-height: 1.5;
+  }
+
+  .security-rules li::before {
+    content: '×';
+    position: absolute;
+    left: 0;
+    color: #ef4444;
+    font-weight: 700;
+  }
+
+  /* ============================================
+     COMMAND GRID
+     ============================================ */
+
+  .cmd-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+
+  .cmd-card {
+    padding: 1.25rem;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--card-shadow);
+  }
+
+  .cmd-name {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    margin-bottom: 0.5rem;
+  }
+
+  .cmd-card p {
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+  }
+
+  /* ============================================
+     PUBLISH INFO
+     ============================================ */
+
+  .publish-info {
+    margin-bottom: 3rem;
+  }
+
+  .publish-info h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .publish-info p {
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin: 1rem 0;
+  }
+
+  .platform-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .platform-badge {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    padding: 0.25rem 0.75rem;
+    background: var(--code-bg);
+    color: var(--code-text);
+    border-radius: 999px;
+    border: 1px solid var(--color-border);
+  }
+
+  /* ============================================
+     TRUST INFO
+     ============================================ */
+
+  .trust-info {
+    margin-top: 2rem;
+  }
+
+  .trust-info h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+
+  .trust-info > p {
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 1rem;
+  }
+
+  .trust-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .trust-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+  }
+
+  .trust-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.1875rem 0.625rem;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  .trust-badge--official {
+    background: rgba(59, 130, 246, 0.12);
+    color: #3b82f6;
+  }
+
+  .trust-badge--verified {
+    background: rgba(34, 197, 94, 0.12);
+    color: #22c55e;
+  }
+
+  .trust-badge--community {
+    background: var(--color-bg-secondary);
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-border);
+  }
+
+  /* ============================================
+     PROJECT STRUCTURE
+     ============================================ */
+
+  .structure-note {
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-top: 1.5rem;
+  }
+
+  /* ============================================
+     AI CARDS
+     ============================================ */
+
+  .ai-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .ai-card {
+    padding: 1rem;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-xs);
+    text-align: center;
+  }
+
+  .ai-card-name {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+
+  .ai-card-file {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+  }
+
+  .ai-note {
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  /* ============================================
+     CODE BLOCKS
+     ============================================ */
+
+  .code-block--lg {
+    margin: 1.5rem 0;
+  }
+
+  .code-block--lg pre {
+    margin: 0;
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  .code-comment {
+    color: var(--color-text-muted);
+  }
+
+  /* ============================================
+     CTA
+     ============================================ */
+
+  .dev-cta {
+    padding: 5rem 0;
+    text-align: center;
+  }
+
+  .dev-cta h2 {
+    font-size: clamp(1.5rem, 3.5vw, 2rem);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    margin-bottom: 0.75rem;
+  }
+
+  .dev-cta p {
+    font-size: 1.0625rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 2rem;
+  }
+
+  .dev-cta-actions {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  /* ============================================
+     RESPONSIVE
+     ============================================ */
+
+  @media (max-width: 768px) {
+    .dev-hero {
+      padding: 4rem 0 3rem;
+    }
+
+    .dev-section {
+      padding: 3.5rem 0;
+    }
+
+    .flow-diagram {
+      justify-content: center;
+    }
+
+    .flow-step {
+      min-width: 80px;
+      padding: 1rem;
+    }
+
+    .step {
+      gap: 1rem;
+    }
+
+    .field-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .cmd-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .dev-hero {
+      padding: 3rem 0 2rem;
+    }
+
+    .lang-cards {
+      grid-template-columns: 1fr;
+    }
+
+    .field-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .flow-diagram {
+      flex-direction: column;
+    }
+
+    .flow-arrow {
+      transform: rotate(90deg);
+    }
+  }
+
+  /* ============================================
+     REDUCED MOTION
+     ============================================ */
+
+  @media (prefers-reduced-motion: reduce) {
+    .lang-card,
+    .cmd-card,
+    .flow-step {
+      transition: none !important;
+    }
+  }
+</style>
