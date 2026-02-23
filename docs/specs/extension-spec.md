@@ -30,6 +30,7 @@
 | `./binary` | stdin 读取 Markdown，stdout 输出 Typst 源码 |
 | `./binary --manifest` | stdout 输出 manifest.json 内容 |
 | `./binary --example` | stdout 输出 example.md 内容 |
+| `./binary --version` | stdout 输出版本号（从 manifest.json 读取），然后退出 |
 | `./binary -o output.typ input.md` | 从文件读取，输出到文件（可选支持） |
 
 ### 2.2 安全约束
@@ -37,6 +38,33 @@
 - Presto 以最小环境执行：`PATH=/usr/local/bin:/usr/bin:/bin`，无其他环境变量
 - 执行超时：30 秒
 - 二进制大小限制：100MB
+- **禁止访问网络**——任何网络请求都是安全风险
+- **禁止写文件**——只允许通过 stdin/stdout 进行 I/O
+- **stdout 只能输出 Typst 源码**（`--manifest`/`--version`/`--example` 模式除外）
+
+### 2.4 三层安全防护
+
+模板二进制直接在用户机器上运行，通过三层防护确保安全：
+
+**第一层：静态分析** — 源码层面检测禁止的 import/依赖
+
+| 语言 | 禁止的包/crate |
+|------|---------------|
+| Go | `net`, `net/*`, `os/exec`, `plugin`, `debug/*` |
+| Rust | `reqwest`, `hyper`, `tokio`, `std::net`, `std::process::Command` 等 |
+| TypeScript | `node:http`, `node:net`, `node:child_process`, `fetch()` 等 |
+
+**第二层：运行时网络沙箱** — 操作系统级网络隔离
+
+- macOS：`sandbox-exec -p '(version 1)(allow default)(deny network*)'`
+- Linux：`unshare --net`
+
+**第三层：输出格式验证** — 检测输出内容
+
+1. 不得包含 HTML 标签（`<html>`, `<script>`, `<iframe>` 等）
+2. 首行必须是 Typst 指令（以 `#` 开头）
+
+详细规范见 CONVENTIONS.md。
 
 ### 2.3 嵌入数据
 
@@ -94,26 +122,23 @@
 | `version` | string | 是 | 语义化版本号（semver） |
 | `author` | string | 是 | 作者名或 GitHub 用户名 |
 | `license` | string | 是 | SPDX 许可证标识符 |
-| `category` | string | 是 | 分类，见下方枚举 |
+| `category` | string | 是 | 分类标签，自由文本，最大 20 字符，仅允许中文/英文/数字/空格/连字符。示例："公文"、"教育"、"简历"、"学术论文"、"商务" |
 | `keywords` | string[] | 是 | 搜索关键词（建议 2-6 个） |
 | `minPrestoVersion` | string | 是 | 最低兼容 Presto 版本 |
 | `requiredFonts` | FontRequirement[] | 否 | 所需字体列表 |
 | `frontmatterSchema` | Record<string, FieldSchema> | 否 | 支持的 YAML frontmatter 字段 |
 
-### 3.3 分类枚举
+### 3.3 分类
 
-```
-government   政务
-education    教育（教案、考勤表、成绩册、比赛表等）
-business     商务/办公
-academic     学术
-legal        法务
-resume       简历/求职
-creative     创意/设计
-other        其他
-```
+category 为自由文本，不使用固定枚举。约束：
+
+- 最大 20 字符
+- 仅允许中文/英文/数字/空格/连字符
+- 示例："公文"、"教育"、"商务"、"学术论文"、"简历"、"法务"、"创意"
 
 空分类不显示——前端渲染时过滤掉没有扩展的分类。
+
+registry.json 中的 categories 从所有模板的 category 字段自动聚合去重，附带中英文 label。
 
 ### 3.4 FontRequirement
 
@@ -226,22 +251,40 @@ e5f6a7b8...  presto-template-gongwen-darwin-amd64
       "license": "MIT",
       "trust": "official",
       "publishedAt": "2026-02-20T10:00:00Z",
-      "repository": "https://github.com/Presto-io/official-templates"
+      "repository": "https://github.com/Presto-io/official-templates",
+      "price": 0,
+      "tier": "free"
     }
   ]
 }
 ```
 
-### 6.2 信任分级
+### 6.2 定价字段
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `price` | number | 价格（人民币），0 表示免费 |
+| `tier` | string | `"free"` 或 `"paid"` |
+| `purchaseUrl` | string? | 付费模板的购买链接（仅 `tier: "paid"` 时有值） |
+
+定价信息**不在 manifest.json 中**，由 `template-registry` 仓库的 `pricing.json` 维护，CI 生成 registry.json 时合并。不在 `pricing.json` 中的模板默认 `price: 0, tier: "free"`。
+
+### 6.3 信任分级
 
 | 级别 | 标识 | 条件 | 颜色 |
 |------|------|------|------|
 | `official` | 蓝色盾牌 | Presto-io 组织发布 | `#3b82f6` |
-| `verified` | 绿色对勾 | 通过自动化审核 + 签名验证 | `#22c55e` |
+| `verified` | 绿色对勾 | Release 的 SHA256SUMS 有有效 GPG 签名（公钥在 registry 中注册） | `#22c55e` |
 | `community` | 灰色标签 | 仅收录，未审核 | `var(--color-muted)` |
 | `unrecorded` | 警告标识 | 用户手动 URL 安装（不在 registry 中） | `var(--color-warning)` |
 
-### 6.3 Registry 目录结构
+获取 `verified` 标识的步骤：
+
+1. 生成 GPG 密钥对
+2. 在 template-registry 注册公钥
+3. Release 时对 SHA256SUMS 签名，生成 SHA256SUMS.sig
+
+### 6.4 Registry 目录结构
 
 每种扩展类型的 registry 仓库内部结构：
 

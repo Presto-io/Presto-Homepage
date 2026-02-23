@@ -20,37 +20,127 @@ Presto 是一个 Markdown → Typst → PDF 文档转换平台。模板定义了
 my-template/
   reference/              ← 开发者的参考文件（PDF、DOCX、TYP 等）
     README.md             ← 说明支持的格式
-  main.go                 ← 核心转换逻辑（语言因 starter 而异）
-  manifest.json           ← 模板元数据
+  main.go                 ← 核心转换逻辑（语言因 starter 而异：main.go / src/main.rs / src/index.ts）
+  manifest.json           ← 模板元数据（name 决定二进制名称）
   example.md              ← 示例输入文档
-  Makefile                ← build / preview / test / release
+  Makefile                ← build / preview / test / test-security / clean
   .github/workflows/
     release.yml           ← 6 平台自动构建 + GitHub Release
-  CONVENTIONS.md          ← 本文件
-  CLAUDE.md               ← → 引用本文件
-  AGENTS.md               ← → 引用本文件
+  .claude/
+    settings.local.json   ← Claude Code 权限配置
+  CONVENTIONS.md          ← stub，指向本中心文档
+  CLAUDE.md               ← → 引用本中心文档
+  AGENTS.md               ← → 引用本中心文档
+  .cursor/
+    rules                 ← → 引用本中心文档
   README.md               ← 模板说明文档（面向用户）
   LICENSE
 ```
+
+> **注意**：各 starter 仓库的 CONVENTIONS.md、CLAUDE.md、AGENTS.md、.cursor/rules 均为 stub，
+> 内容只有一行链接指向本文件。本文件是唯一的规范来源（Single Source of Truth）。
 
 ---
 
 ## 二进制协议
 
-模板编译后是一个独立可执行文件，必须支持以下三种调用：
+模板编译后是一个独立可执行文件，必须支持以下四种调用：
 
 | 调用方式 | 行为 | 示例 |
 |---------|------|------|
 | `./binary` | stdin 读 Markdown，stdout 输出 Typst 源码 | `cat doc.md \| ./binary > out.typ` |
 | `./binary --manifest` | stdout 输出 manifest.json 内容 | `./binary --manifest > manifest.json` |
 | `./binary --example` | stdout 输出 example.md 内容 | `./binary --example > example.md` |
+| `./binary --version` | stdout 输出版本号（从 manifest.json 的 version 字段读取），然后退出 | `./binary --version` |
 
 **关键约束：**
 
 - manifest.json 和 example.md 必须嵌入在二进制内部（编译时内嵌）
 - 执行环境最小化：只有 `PATH=/usr/local/bin:/usr/bin:/bin`，无其他环境变量
 - 超时限制：30 秒
-- 不得访问网络、不得写文件（只用 stdin/stdout）
+- **禁止访问网络**——模板二进制在用户机器上执行，任何网络请求都是安全风险
+- **禁止写文件**——只允许通过 stdin/stdout 进行 I/O
+- **stdout 只能输出 Typst 源码**——不得输出 HTML、JSON（`--manifest`/`--version`/`--example` 模式除外）或任何非 Typst 内容
+
+---
+
+## 安全规范
+
+模板二进制直接在用户机器上运行，安全性是第一优先级。Presto 通过**三层防护**确保模板不会危害用户：
+
+### 设计原则
+
+1. **零网络**：模板不需要网络，所有资源在编译时嵌入
+2. **纯函数**：stdin → stdout，无副作用，不读写文件系统
+3. **最小权限**：执行环境中无环境变量、无 home 目录访问
+4. **可审计**：所有依赖必须在构建文件中显式声明，禁止动态加载
+
+### 第一层：静态分析
+
+在源码层面检测禁止的 import 和依赖，按语言分别定义黑名单：
+
+**Go —— 禁止的标准库包：**
+
+```text
+net, net/*, os/exec, plugin, debug/*
+```
+
+检测方式：`go list -f '{{join .Imports "\n"}}' ./... | grep -E <deny-pattern>`
+
+**Rust —— 禁止的 crate 和 std 模块：**
+
+```text
+# 禁止的第三方 crate（含传递依赖）
+reqwest, hyper, ureq, surf, attohttpc, native-tls, openssl, rustls, tokio, async-std
+
+# 禁止的标准库用法
+std::net, TcpStream, UdpSocket, TcpListener, std::process::Command
+```
+
+检测方式：`cargo tree --prefix none --no-dedupe | grep -iE <deny-pattern>` + 源码 grep
+
+**TypeScript —— 禁止的 Node 模块和 API：**
+
+```text
+# 禁止的 import
+node:http, node:https, node:net, node:dgram, node:dns, node:tls,
+node:child_process, node:cluster, node:worker_threads
+
+# 禁止的 API 调用
+fetch(), XMLHttpRequest, WebSocket
+
+# 禁止的 npm 包
+axios, node-fetch, got, superagent, request, undici
+```
+
+检测方式：源码 grep + `jq` 审计 package.json 依赖
+
+### 第二层：运行时网络沙箱
+
+即使静态分析通过，仍然通过操作系统级别的网络隔离进行验证：
+
+- **macOS**：`sandbox-exec -p '(version 1)(allow default)(deny network*)'` — 内核级网络阻断
+- **Linux**：`unshare --net` — 网络命名空间隔离（CI 环境使用此方式）
+
+在沙箱中运行 `echo "# Test" | ./binary`，如果二进制尝试任何网络连接，系统会直接拒绝并报错。
+
+### 第三层：输出格式验证
+
+验证 `--example | ./binary` 的 stdout 输出：
+
+1. **不得包含 HTML 标签**：检测 `<html>`、`<script>`、`<iframe>`、`<img>`、`<link>`、`<!DOCTYPE>` 等
+2. **首行必须是 Typst 指令**：以 `#` 开头（如 `#set`、`#let`、`#heading`）
+
+### 执行方式
+
+安全测试集成在 Makefile 的 `test-security` 目标中，`make test` 会自动先运行安全测试：
+
+```bash
+make test           # 自动触发 test-security → 功能测试
+make test-security  # 仅运行安全测试
+```
+
+任何安全检测失败都会阻止后续功能测试，CI 中同样生效。
 
 ---
 
@@ -64,7 +154,7 @@ my-template/
   "version": "1.0.0",
   "author": "your-github-username",
   "license": "MIT",
-  "category": "business",
+  "category": "通用",
   "keywords": ["报告", "商务"],
   "minPrestoVersion": "0.1.0",
   "requiredFonts": [],
@@ -85,7 +175,7 @@ my-template/
 | `version` | 是 | semver |
 | `author` | 是 | GitHub 用户名 |
 | `license` | 是 | SPDX 标识符 |
-| `category` | 是 | 分类：government / education / business / academic / legal / resume / creative / other |
+| `category` | 是 | 模板分类标签，自由文本，最大 20 字符，只允许中文/英文/数字/空格/连字符。示例："公文"、"教育"、"简历"、"学术论文"、"商务" |
 | `keywords` | 是 | 搜索关键词，2-6 个 |
 | `minPrestoVersion` | 是 | 最低兼容 Presto 版本 |
 | `requiredFonts` | 否 | 所需字体列表 |
@@ -118,6 +208,23 @@ my-template/
 ```
 
 type 可选：`string` / `number` / `boolean` / `array`
+
+### 信任等级（trust）
+
+trust 字段**不由模板自己声明**，而是由 Presto 的 template-registry 在索引时自动判定：
+
+| Trust | 条件 | 含义 |
+|-------|------|------|
+| `official` | 仓库 owner 是 `Presto-io` 组织 | 官方出品 |
+| `verified` | Release 的 SHA256SUMS 文件有有效的 GPG 签名（公钥在 registry 中注册） | 开发者身份已验证，二进制未被篡改 |
+| `community` | 在 registry 中，无有效签名 | 仅收录，未审核 |
+| `unrecorded` | 不在 registry 中 | 用户手动 URL 安装 |
+
+模板开发者不需要在 manifest.json 中添加 trust 字段。如果你希望你的模板获得 `verified` 标识，需要：
+
+1. 生成 GPG 密钥对
+2. 在 template-registry 注册你的公钥
+3. Release 时对 SHA256SUMS 文件进行 GPG 签名，生成 SHA256SUMS.sig
 
 ---
 
@@ -239,7 +346,7 @@ c) 逐项和我确认
 
 根据确认的排版需求，生成以下文件：
 
-1. **转换逻辑**（main.go / main.rs / index.ts）
+1. **转换逻辑**（main.go / main.rs / src/index.ts）
    - 解析 YAML frontmatter
    - 将 Markdown 结构映射为 Typst 代码
    - 输出完整的 Typst 源码（包含页面设置、字体定义、内容）
@@ -254,6 +361,25 @@ c) 逐项和我确认
    - 包含 frontmatter 的所有字段
    - 覆盖各级标题、列表、表格等元素
    - 内容有意义（不是 lorem ipsum），最好源自参考文件
+
+#### 各语言技术栈参考
+
+三个 starter 分别使用以下库实现 Markdown 解析和 CLI：
+
+| 功能 | Go | Rust | TypeScript (Bun) |
+| ---- | -- | ---- | ---------------- |
+| CLI 参数 | `flag` (标准库) | `clap` (derive 模式) | `process.argv` 手动解析 |
+| Markdown 解析 | `goldmark` (AST 遍历) | `pulldown-cmark` (事件驱动) | `marked` (token 遍历) |
+| YAML frontmatter | `gopkg.in/yaml.v3` | `serde_yaml` | `js-yaml` |
+| JSON 序列化 | `encoding/json` (标准库) | `serde_json` | 内置 `JSON` |
+| 文件嵌入 | `//go:embed` | `include_str!()` | Bun `import with { type: "text" }` |
+| 编译产物 | `go build` | `cargo build --release` | `bun build --compile` |
+
+**选择建议：**
+
+- **Go**：交叉编译最简单（`GOOS/GOARCH` 即可），推荐新手使用
+- **Rust**：二进制最小、性能最高，需要安装 cross-compilation 工具链
+- **TypeScript**：开发体验最好，但 `bun build --compile` 产物较大
 
 ### 第四步：测试预览
 
@@ -443,34 +569,71 @@ git push origin main --tags
 
 ## Makefile 参考
 
+Makefile 的模板名称从 `manifest.json` 动态读取，确保二进制命名与元数据一致。
+
+以下以 Go 版本为例（Rust / TypeScript 仅 `build` 命令和安全黑名单不同）：
+
 ```makefile
-NAME := my-template
+NAME := $(shell jq -r .name manifest.json 2>/dev/null || echo my-template)
 BINARY := presto-template-$(NAME)
 
-# 当前平台构建
+# Go 安全白名单：禁止这些标准库包
+GO_STDLIB_DENY := ^net$$|^net/|^os/exec$$|^plugin$$|^debug/|^testing$$
+
 build:
-	go build -o $(BINARY) .
+    go build -o $(BINARY) .
 
-# 安装到 Presto 并预览
 preview: build
-	mkdir -p ~/.presto/templates/$(NAME)
-	cp $(BINARY) ~/.presto/templates/$(NAME)/$(BINARY)
-	./$(BINARY) --manifest > ~/.presto/templates/$(NAME)/manifest.json
-	@echo "✓ 模板已安装到 ~/.presto/templates/$(NAME)/"
-	@echo "  请在 Presto 中刷新模板列表查看效果"
+    mkdir -p ~/.presto/templates/$(NAME)
+    cp $(BINARY) ~/.presto/templates/$(NAME)/$(BINARY)
+    ./$(BINARY) --manifest > ~/.presto/templates/$(NAME)/manifest.json
 
-# 运行测试
-test: build
-	./$(BINARY) --manifest | python3 -m json.tool > /dev/null
-	./$(BINARY) --example | ./$(BINARY) > /dev/null
-	@echo "✓ 所有测试通过"
+test: build test-security
+    @./$(BINARY) --manifest | python3 -m json.tool > /dev/null
+    @./$(BINARY) --example | ./$(BINARY) > /dev/null
+    @./$(BINARY) --version > /dev/null
+    @# category 字段校验（非空、≤20 字符、仅中英文/数字/空格/连字符）
+    @./$(BINARY) --manifest | python3 -c "..."
+    @echo "All tests passed."
 
-# 清理
+test-security: build
+    @# 第一层：静态分析（禁止的 import）
+    @FORBIDDEN=$$(go list -f '{{join .Imports "\n"}}' ./... | grep -E '$(GO_STDLIB_DENY)'); \
+    if [ -n "$$FORBIDDEN" ]; then echo "SECURITY FAIL"; exit 1; fi
+    @# 第二层：运行时网络沙箱（自动检测平台）
+    @if command -v sandbox-exec >/dev/null 2>&1; then \
+        echo "# Test" | sandbox-exec -p '(version 1)(allow default)(deny network*)' ./$(BINARY) > /dev/null; \
+    elif unshare --net true 2>/dev/null; then \
+        echo "# Test" | unshare --net ./$(BINARY) > /dev/null; \
+    fi
+    @# 第三层：输出格式验证（不含 HTML、首行为 Typst 指令）
+    @OUTPUT=$$(./$(BINARY) --example | ./$(BINARY)); \
+    echo "$$OUTPUT" | grep -qiE '<html|<script' && exit 1 || true; \
+    echo "$$OUTPUT" | head -1 | grep -q '^#'
+
 clean:
-	rm -f $(BINARY)
+    rm -f $(BINARY)
 
-.PHONY: build preview test clean
+.PHONY: build preview test test-security clean
 ```
+
+### 各语言安全黑名单变量
+
+| 语言 | 变量名 | 检测方式 |
+| ---- | ------ | -------- |
+| Go | `GO_STDLIB_DENY` | `go list` 分析实际 imports |
+| Rust | `RUST_CRATE_DENY` + `RUST_SRC_DENY` | `cargo tree` 审计依赖 + 源码 grep |
+| TypeScript | `TS_IMPORT_DENY` + `TS_API_DENY` | 源码 grep + `jq` 审计 package.json |
+
+### Makefile 命令速查
+
+| 命令 | 功能 |
+| ---- | ---- |
+| `make build` | 编译当前平台二进制 |
+| `make preview` | 编译并安装到本地 Presto |
+| `make test` | 安全测试 + 功能测试（CI 中使用） |
+| `make test-security` | 仅运行安全测试 |
+| `make clean` | 清理编译产物 |
 
 ---
 
@@ -503,6 +666,24 @@ clean:
 **Q: 应该针对哪个 Typst 版本？**
 
 当前 Presto 使用 Typst 0.14.2。在 `minPrestoVersion` 中声明兼容版本。
+
+### 安全相关
+
+**Q: 为什么模板不能访问网络？**
+
+模板二进制直接在用户机器上运行。如果允许网络访问，恶意模板可以上传用户文档内容、下载恶意代码，或成为攻击跳板。因此 Presto 在设计上完全禁止模板发起网络请求，所有资源（manifest.json、example.md）必须在编译时嵌入。
+
+**Q: `make test-security` 报 SKIP: no sandbox tool available 怎么办？**
+
+这表示你的系统没有可用的网络沙箱工具。macOS 自带 `sandbox-exec`，通常不会出现此问题。Linux 上需要确保内核支持 user namespace（`unshare --net`）。CI 中（GitHub Actions Linux runner）默认支持。本地开发时 SKIP 不影响其他安全检测，但建议在 CI 中确保沙箱测试通过。
+
+**Q: 我的模板需要用到某个被禁止的 import 怎么办？**
+
+大多数情况下你不需要被禁止的 import。例如你不需要 `net/http` 来读取文件（模板通过 stdin 接收输入），不需要 `os/exec` 来调用外部命令（所有转换在进程内完成）。如果你确实有特殊需求，请在 issue 中说明使用场景，我们会评估是否调整安全策略。
+
+**Q: 第三方依赖的传递依赖包含网络库怎么办？**
+
+Rust 的 `cargo tree` 检测包含传递依赖。如果你使用的 Markdown 解析库间接依赖了网络库，应该选择不包含网络功能的替代库，或通过 feature flag 禁用网络相关功能。Go 和 TypeScript 同理。
 
 ---
 
@@ -541,10 +722,11 @@ AI 生成 main.go、manifest.json、example.md，开发者 `make preview` 验证
 ## 与其他仓库的关系
 
 | 仓库 | 与本仓库的关系 |
-|------|-------------|
+| ---- | ------------- |
 | `Presto-io/Presto` | 运行你的模板二进制，提供预览环境 |
 | `Presto-io/template-registry` | 自动收录你的模板到商店 |
 | `Presto-io/registry-deploy` | 托管预览资源（CDN） |
-| `Presto-io/Presto-Homepage` | 官网商店展示你的模板 |
+| `Presto-io/Presto-Homepage` | 官网商店展示你的模板；本文件的宿主仓库 |
+| `Presto-io/create-presto-template` | 交互式脚手架（`npx create-presto-template`），基于本规范生成新模板项目 |
 
 技术规范详见 `extension-spec.md`。
