@@ -44,7 +44,7 @@ my-template/
 
 ## 二进制协议
 
-模板编译后是一个独立可执行文件，必须支持以下四种调用：
+模板编译后是一个独立可执行文件，必须且只能支持以下四种调用：
 
 | 调用方式 | 行为 | 示例 |
 |---------|------|------|
@@ -61,6 +61,7 @@ my-template/
 - **禁止访问网络**——模板二进制在用户机器上执行，任何网络请求都是安全风险
 - **禁止写文件**——只允许通过 stdin/stdout 进行 I/O
 - **stdout 只能输出 Typst 源码**——不得输出 HTML、JSON（`--manifest`/`--version`/`--example` 模式除外）或任何非 Typst 内容
+- **不得添加协议外的 CLI flag**——二进制只能响应上述四种调用方式，禁止添加 `-h`、`-v`、`-o` 等额外参数
 
 ---
 
@@ -129,7 +130,7 @@ axios, node-fetch, got, superagent, request, undici
 验证 `--example | ./binary` 的 stdout 输出：
 
 1. **不得包含 HTML 标签**：检测 `<html>`、`<script>`、`<iframe>`、`<img>`、`<link>`、`<!DOCTYPE>` 等
-2. **首行必须是 Typst 指令**：以 `#` 开头（如 `#set`、`#let`、`#heading`）
+2. **首行必须是 Typst 指令或注释**：以 `#` 开头（如 `#set`、`#let`、`#heading`）或 `//` 开头（Typst 行注释）
 
 ### 执行方式
 
@@ -606,10 +607,10 @@ test-security: build
     elif unshare --net true 2>/dev/null; then \
         echo "# Test" | unshare --net ./$(BINARY) > /dev/null; \
     fi
-    @# 第三层：输出格式验证（不含 HTML、首行为 Typst 指令）
+    @# 第三层：输出格式验证（不含 HTML、首行为 Typst 指令或注释）
     @OUTPUT=$$(./$(BINARY) --example | ./$(BINARY)); \
     echo "$$OUTPUT" | grep -qiE '<html|<script' && exit 1 || true; \
-    echo "$$OUTPUT" | head -1 | grep -q '^#'
+    echo "$$OUTPUT" | head -1 | grep -q '^[#/]'
 
 clean:
     rm -f $(BINARY)
@@ -728,5 +729,6 @@ AI 生成 main.go、manifest.json、example.md，开发者 `make preview` 验证
 | `Presto-io/registry-deploy` | 托管预览资源（CDN） |
 | `Presto-io/Presto-Homepage` | 官网商店展示你的模板；本文件的宿主仓库 |
 | `Presto-io/create-presto-template` | 交互式脚手架（`npx create-presto-template`），基于本规范生成新模板项目 |
+| `Presto-io/presto-official-templates` | 官方模板 monorepo（Go），包含 gongwen、jiaoan-shicao 等官方维护的模板 |
 
-技术规范详见 `extension-spec.md`。
+技术规范详见 [extension-spec.md](./specs/extension-spec.md)。
