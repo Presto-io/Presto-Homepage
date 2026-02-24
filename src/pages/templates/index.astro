@@ -2,14 +2,17 @@
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
-import TemplateStore from '../../components/TemplateStore.svelte';
-
-const registryUrl = 'https://presto.c-1o.top/templates/registry.json';
 ---
 <Layout title="模板商店 - Presto">
   <Header />
   <main class="store-page">
-    <TemplateStore client:load {registryUrl} />
+    <iframe
+      src="/showcase/store-templates"
+      class="store-iframe"
+      title="模板商店"
+      sandbox="allow-scripts allow-same-origin"
+      loading="eager"
+    ></iframe>
   </main>
   <Footer />
 </Layout>
@@ -17,6 +20,14 @@ const registryUrl = 'https://presto.c-1o.top/templates/registry.json';
 <style>
   .store-page {
     padding-top: 72px;
-    min-height: 100vh;
+    height: calc(100vh - 72px);
+    display: flex;
+    flex-direction: column;
+  }
+  .store-iframe {
+    flex: 1;
+    width: 100%;
+    border: none;
+    min-height: 600px;
   }
 </style>

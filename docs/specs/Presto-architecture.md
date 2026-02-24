@@ -65,17 +65,22 @@
 
 ### 2.3 路由结构
 
+**命名规范**：商店类 showcase 统一用 `store-{type}` 前缀（store-templates, store-extensions, store-skills），与功能展示类路由区分。
+
 ```
 frontend/src/routes/showcase/
-  +layout.svelte                ← PrestoShell：全局点击拦截、主题同步、尺寸适配
-  editor/+page.svelte           ← 通用编辑器预览（?registry={name} 动态加载）
-  editor-gongwen/+page.svelte   ← 编辑器 - 公文模板（静态预设）
-  editor-jiaoan/+page.svelte    ← 编辑器 - 教案模板（静态预设）
-  batch/+page.svelte            ← 批量转换
-  templates/+page.svelte        ← 模板管理
-  drop/+page.svelte             ← 拖入文件动画
-  hero/+page.svelte             ← Hero 打字动画
+  +layout.svelte                        ← PrestoShell：全局点击拦截、主题同步、尺寸适配
+  editor/+page.svelte                   ← 通用编辑器预览（?registry={name} 动态加载）
+  editor-gongwen/+page.svelte           ← 编辑器 - 公文模板（静态预设）
+  editor-jiaoan/+page.svelte            ← 编辑器 - 教案模板（静态预设）
+  batch/+page.svelte                    ← 批量转换
+  templates/+page.svelte                ← 模板管理
+  drop/+page.svelte                     ← 拖入文件动画
+  hero/+page.svelte                     ← Hero 打字动画
+  store-templates/+page@.svelte         ← 模板商店浏览（绕过 PrestoShell，需全交互）
 ```
+
+> **`store-*` 路由的特殊性**：使用 `+page@.svelte` 绕过 PrestoShell layout，因为商店页面需要完整的键盘输入（搜索）和点击交互。改用根 layout，它已对 showcase 路由跳过拖拽和向导。官网通过 iframe 嵌入这些页面用于纯展示（无安装功能）。
 
 ### 2.4 通用编辑器预览（/showcase/editor）
 
