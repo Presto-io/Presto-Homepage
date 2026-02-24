@@ -632,7 +632,7 @@
   .mobile-overlay {
     position: fixed;
     inset: 0;
-    z-index: -1;
+    z-index: 999;
     visibility: hidden;
     pointer-events: none;
     display: flex;
@@ -640,14 +640,13 @@
     /* Curtain reveal: clip from top edge downward */
     clip-path: inset(0 0 100% 0);
     transition:
-      clip-path 0.48s cubic-bezier(0.32, 0.72, 0, 1),
-      visibility 0s linear 0.48s;
+      clip-path 0.32s cubic-bezier(0.4, 0, 1, 1),
+      visibility 0s linear 0.32s;
   }
 
   .mobile-overlay.is-open {
     visibility: visible;
     pointer-events: auto;
-    z-index: 999;
     clip-path: inset(0 0 0 0);
     transition:
       clip-path 0.48s cubic-bezier(0.32, 0.72, 0, 1),
@@ -884,13 +883,6 @@
   .mobile-overlay.is-open .mobile-overlay-content {
     opacity: 1;
     transform: translateY(0);
-  }
-
-  /* Close: faster, no delay */
-  .mobile-overlay:not(.is-open) {
-    transition:
-      clip-path 0.32s cubic-bezier(0.4, 0, 1, 1),
-      visibility 0s linear 0.32s;
   }
 
   .mobile-overlay:not(.is-open) .mobile-overlay-content {
