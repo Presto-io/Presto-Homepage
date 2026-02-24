@@ -77,12 +77,15 @@
       </button>
     </div>
   </div>
+</header>
 
-  <!-- Mobile Full-Screen Overlay -->
-  <div class="mobile-overlay" id="mobile-overlay" aria-hidden="true">
-    <div class="mobile-overlay-backdrop" id="mobile-overlay-backdrop"></div>
-    <div class="mobile-overlay-content">
-      <nav class="mobile-nav">
+<!-- Mobile Full-Screen Overlay (MUST be outside <header>
+     because header's backdrop-filter creates a containing
+     block that traps position:fixed children) -->
+<div class="mobile-overlay" id="mobile-overlay" aria-hidden="true">
+  <div class="mobile-overlay-backdrop" id="mobile-overlay-backdrop"></div>
+  <div class="mobile-overlay-content">
+    <nav class="mobile-nav">
         <a href="/#features" class="mobile-link">
           <span class="mobile-link-text">
             <span class="zh">功能</span><span class="en">Features</span>
@@ -141,7 +144,7 @@
       </nav>
     </div>
   </div>
-</header>
+</div>
 
 
 <script is:inline>
