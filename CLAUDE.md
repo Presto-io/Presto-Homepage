@@ -8,7 +8,7 @@ Presto 官网，部署在 Vercel。
 - 零前端框架（纯 Astro 组件 + 内联 vanilla JS）
 - 自定义 CSS（CSS 变量 + `prefers-color-scheme` 暗色模式）
 - 系统字体栈（无外部字体依赖）
-- 模板商店页面使用 Svelte island（`@astrojs/svelte`）
+- 模板商店页面通过 iframe 嵌入 Presto 的 `/showcase/store-templates`
 
 ## 项目结构
 
@@ -41,7 +41,7 @@ npm run preview   # 预览构建产物
 ## 架构决策
 
 - Showcase 区域通过 iframe 嵌入 Presto 应用的 `/showcase/*` 路由（真实 UI 组件，非截图）
-- 模板商店（`/templates`）使用 Svelte island 组件，数据来自 template-registry 的静态 JSON
+- 模板商店（`/templates`）通过 iframe 嵌入 Presto 的 `/showcase/store-templates`，商店 UI 由 Presto 仓库维护
 - Coming Soon 导航项（Plugins, Agent Skills）为灰色不可点击按钮
 
 ## 相关仓库
