@@ -1,0 +1,1 @@
+import"../chunks/DE3Q9Awg.js";import"../chunks/C8M2xYoJ.js";import{S as r}from"../chunks/DLrGXveD.js";function i(e){r(e,{mode:"web",registryUrl:"https://presto.c-1o.top/templates/registry.json",title:"模板商店",previewUrl:t=>`/showcase/editor?registry=${t}`,readmeUrl:t=>`https://presto.c-1o.top/templates/${t}/README.md`})}export{i as component};
