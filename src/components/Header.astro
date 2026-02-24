@@ -260,11 +260,13 @@
       overlay.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
 
-      /* Reset all links immediately for clean re-entrance */
-      for (var j = 0; j < mobileLinks.length; j++) {
-        mobileLinks[j].classList.remove('is-visible');
-        mobileLinks[j].style.transitionDelay = '0ms';
-      }
+      /* Delay link reset until clip-path curtain finishes retracting */
+      setTimeout(function () {
+        for (var j = 0; j < mobileLinks.length; j++) {
+          mobileLinks[j].classList.remove('is-visible');
+          mobileLinks[j].style.transitionDelay = '0ms';
+        }
+      }, 350);
     }
 
     /* Hamburger toggle */
@@ -885,16 +887,16 @@
     transform: translateY(0);
   }
 
+  /* Close: keep content visible, let clip-path wipe everything */
   .mobile-overlay:not(.is-open) .mobile-overlay-content {
-    transition:
-      opacity 0.15s ease,
-      transform 0.2s ease;
+    opacity: 1;
+    transform: translateY(0);
+    transition: none;
   }
 
-  /* Links: fast collapse without stagger on close */
+  /* Links: stay visible during close, reset after clip-path finishes */
   .mobile-link:not(.is-visible) {
-    transition-duration: 0.15s;
-    transition-delay: 0ms !important;
+    transition: none;
   }
 
   /* ============================================
