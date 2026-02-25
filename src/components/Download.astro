@@ -162,9 +162,9 @@ const platforms = [
     btn.addEventListener('click', function () {
       var text = this.getAttribute('data-copy');
       navigator.clipboard.writeText(text).then(function () {
-        var original = btn.innerHTML;
+        var originalNodes = Array.from(btn.childNodes).map(function(n) { return n.cloneNode(true); });
         btn.textContent = '✓';
-        setTimeout(function () { btn.innerHTML = original; }, 1500);
+        setTimeout(function () { btn.textContent = ''; originalNodes.forEach(function(n) { btn.appendChild(n); }); }, 1500);
       });
     });
   });

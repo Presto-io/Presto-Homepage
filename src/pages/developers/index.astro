@@ -258,7 +258,7 @@ import Footer from '../../components/Footer.astro';
           <span class="en">Template metadata file, embedded into the binary at compile time.</span>
         </p>
 
-        <div class="code-block code-block--lg"><pre><code set:html={`{
+        <div class="code-block code-block--lg"><pre><code>{`{
   "name": "my-template",
   "displayName": "我的模板",
   "description": "一句话描述模板用途",
@@ -273,7 +273,7 @@ import Footer from '../../components/Footer.astro';
     "title": { "type": "string", "default": "请输入标题" },
     "date":  { "type": "string", "format": "YYYY-MM-DD" }
   }
-}`} /></pre></div>
+}`}</code></pre></div>
 
         <div class="field-grid">
           <div class="field-card">
@@ -346,7 +346,7 @@ import Footer from '../../components/Footer.astro';
                 <span class="zh">源码层面检测禁止的 import——不允许网络库、进程执行、动态加载等。</span>
                 <span class="en">Source-level detection of forbidden imports — no networking, process exec, or dynamic loading.</span>
               </p>
-              <div class="code-block"><code set:html={`<span class="code-comment"># Go</span><br/>go list -f '{{join .Imports "\\n"}}' ./... | grep -E 'net|os/exec|plugin'<br/><br/><span class="code-comment"># Rust</span><br/>cargo tree --prefix none | grep -iE 'reqwest|hyper|tokio|std::net'<br/><br/><span class="code-comment"># TypeScript</span><br/>grep -rE 'node:http|node:net|fetch\\(' src/`} /></div>
+              <div class="code-block"><code><span class="code-comment"># Go</span><br/>go list -f '{"{{"}join .Imports "\\n"{"}}"}' ./... | grep -E 'net|os/exec|plugin'<br/><br/><span class="code-comment"># Rust</span><br/>cargo tree --prefix none | grep -iE 'reqwest|hyper|tokio|std::net'<br/><br/><span class="code-comment"># TypeScript</span><br/>grep -rE 'node:http|node:net|fetch\(' src/</code></div>
             </div>
           </div>
 

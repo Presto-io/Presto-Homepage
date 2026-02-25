@@ -78,6 +78,6 @@
 - [x] 无 CSRF 风险（无表单提交）
 - [x] 依赖项无已知漏洞
 - [x] .env 文件已在 .gitignore 中
-- [ ] 安全响应头配置（待修复）
-- [ ] Hero iframe sandbox 属性（待修复）
-- [ ] .gitignore 补充 .vscode/ 和 .claude/（待修复）
+- [x] 安全响应头配置（已修复）
+- [x] Hero iframe sandbox 属性（已修复）
+- [x] .gitignore 补充 .vscode/ 和 .claude/（已修复）
