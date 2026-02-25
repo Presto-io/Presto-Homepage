@@ -35,6 +35,10 @@
   --orb-opacity: 0.12;
   --code-bg: #f1f5f9;
   --code-text: #1e293b;
+  --header-height: 72px;
+  --header-height-mobile: 64px;
+  --header-height-scrolled: 56px;
+  --header-height-mobile-scrolled: 52px;
   --section-gap: 7rem;
   --radius: 55px;
   --radius-sm: 10px;
@@ -68,6 +72,11 @@
     --orb-opacity: 0.2;
     --code-bg: #1e1e22;
     --code-text: #e4e4e7;
+    --hover-bg: rgba(255, 255, 255, 0.05);
+    --hover-bg-strong: rgba(255, 255, 255, 0.08);
+    --hover-bg-subtle: rgba(255, 255, 255, 0.06);
+    --accent-bg-subtle: rgba(59, 130, 246, 0.08);
+    --accent-bg-tag: rgba(96, 165, 250, 0.12);
   }
 }
 
@@ -147,6 +156,8 @@ html[lang="en"] .zh { display: none !important; }
   font-size: 1.125rem;
   color: var(--color-text-secondary);
   max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
   line-height: 1.7;
 }
 
