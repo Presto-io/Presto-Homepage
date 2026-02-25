@@ -9,13 +9,14 @@
 - 需要定义模板开发者的最小开发环境要求（Go toolchain、Typst CLI）
 - 考虑是否提供非 Go 的模板开发方式（如纯 Typst 模板，由统一的 runner 二进制加载）
 
-## 2. 模板签名验证详细设计
+## 2. ~~模板签名验证详细设计~~ → 已由 Verified Templates 方案替代
 
-- 当前方案：GitHub 身份 + SHA256（方案 A）
-- 后期可选：cosign / sigstore 签名（方案 B）
-- 需要设计：签名流程、验证流程、密钥管理、吊销机制
-- 商店页面的签名状态展示（绿色对勾 vs 哈希字符串）
-- Typst 的安全边界：`#read()` 文件访问、`#plugin()` WASM 加载的风险评估
+- ~~当前方案：GitHub 身份 + SHA256（方案 A）~~
+- ~~后期可选：cosign / sigstore 签名（方案 B）~~
+- **新方案：** template-registry CI 从源码编译，替代 GPG/cosign 签名
+- 详见 `docs/specs/verified-templates-design.md`
+- 商店页面的信任状态展示：蓝色盾牌（official）、绿色对勾（verified）、灰色标签（community）
+- Typst 的安全边界：`#read()` 文件访问、`#plugin()` WASM 加载的风险评估（仍待讨论）
 
 ## 3. 字体缺失检测的客户端实现
 

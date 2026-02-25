@@ -217,15 +217,15 @@ trust 字段**不由模板自己声明**，而是由 Presto 的 template-registr
 | Trust | 条件 | 含义 |
 |-------|------|------|
 | `official` | 仓库 owner 是 `Presto-io` 组织 | 官方出品 |
-| `verified` | Release 的 SHA256SUMS 文件有有效的 GPG 签名（公钥在 registry 中注册） | 开发者身份已验证，二进制未被篡改 |
-| `community` | 在 registry 中，无有效签名 | 仅收录，未审核 |
-| `unrecorded` | 不在 registry 中 | 用户手动 URL 安装 |
+| `verified` | template-registry CI 从源码编译，经 PR 审批 | 二进制由可信 CI 构建，源码可审计 |
+| `community` | 在 registry 中，未经验证 | 仅收录，二进制来自第三方 Release |
+| `unrecorded` | 不在 registry 中 | 用户手动拖入安装 |
 
 模板开发者不需要在 manifest.json 中添加 trust 字段。如果你希望你的模板获得 `verified` 标识，需要：
 
-1. 生成 GPG 密钥对
-2. 在 template-registry 注册你的公钥
-3. Release 时对 SHA256SUMS 文件进行 GPG 签名，生成 SHA256SUMS.sig
+1. 确保仓库有 `presto-template` topic
+2. template-registry cron 会自动检测你的新版本并创建 PR
+3. 维护者 review 并 merge PR 后，CI 从你的源码编译并发布
 
 ---
 
@@ -561,8 +561,10 @@ git push origin main --tags
 1. 通过 GitHub topic `presto-template` 发现你的仓库
 2. 下载二进制，提取 manifest 和 example
 3. 编译预览 SVG
-4. 添加到 registry.json
-5. 你的模板出现在 Presto 商店中
+4. 添加到 registry.json（trust: `community`）
+5. 你的模板出现在 Presto 商店中（需用户开启"社区模板"开关）
+
+**升级为 verified：** 如果你的模板被 template-registry 维护者收录为 verified，CI 会从你的源码编译二进制并发布到 template-registry Release。verified 模板默认在商店中可见，无需用户开启开关。
 
 **前提：** 你的仓库必须有 `presto-template` topic（从 starter 仓库创建时已自动设置）。
 

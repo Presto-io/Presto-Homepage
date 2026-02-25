@@ -32,15 +32,18 @@ template-registry/
       README.md
       example.md
       preview-1.svg
+  verified-templates.json             ← verified 模板收录配置（repo + 锁定 tag）
   registry.json                       ← CI 生成的索引
   scripts/
-    build_registry.py                 ← 主构建脚本
+    build_registry.py                 ← 主构建脚本（含 build 子命令）
     download_fonts.py                 ← 字体下载辅助脚本
   fonts/                              ← 编译 SVG 所需的字体
     .gitkeep
   Dockerfile                          ← 沙箱镜像（Typst CLI + 基础字体）
   .github/workflows/
-    update-registry.yml               ← CI 主流程
+    update-registry.yml               ← CI 主流程（discover + extract + compile + index）
+    check-versions.yml                ← cron 版本检测，自动提 PR
+    build-verified.yml                ← verified 模板编译（PR merge 触发）
   CLAUDE.md                           ← 本文件
   README.md
 ```
@@ -233,8 +236,49 @@ jobs:
 
 trust 判断规则：
 - `repo.owner.login === 'Presto-io'` → `official`
-- 未来有签名验证 → `verified`
+- 模板在 `verified-templates.json` 中且已编译 → `verified`
 - 其他 → `community`
+
+---
+
+## Verified 模板编译
+
+### verified-templates.json
+
+```json
+[
+  {
+    "repo": "someone/presto-template-foo",
+    "ref": "v1.0.0",
+    "lang": "go",
+    "name": "foo"
+  }
+]
+```
+
+### build 子命令
+
+`build_registry.py build`：读取 `verified-templates.json`，对每个条目：
+
+1. `git clone --depth 1 --branch {ref} https://github.com/{repo}`
+2. 依赖下载（有网络）：`docker run golang go mod download`
+3. 交叉编译 6 平台（无网络）：`docker run --network none -e CGO_ENABLED=0 golang go build`
+4. 计算 SHA256
+5. `gh release upload {name}-v{version}` 到 template-registry Release
+6. 编译失败则跳过，不影响其他模板
+
+### 安全约束
+
+- `CGO_ENABLED=0`：禁用 C 编译器
+- `--network none`：编译阶段禁止联网
+- `--read-only`：只读根文件系统
+- 5 分钟超时，50MB 产物限制
+
+### 版本检测 workflow（check-versions.yml）
+
+cron 每 6 小时扫描 `verified-templates.json` 中的模板，检测新版本并自动创建 PR。
+
+> 详细设计见 `docs/specs/verified-templates-design.md`
 
 ---
 

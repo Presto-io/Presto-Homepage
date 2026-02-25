@@ -274,15 +274,24 @@ e5f6a7b8...  presto-template-gongwen-darwin-amd64
 | 级别 | 标识 | 条件 | 颜色 |
 |------|------|------|------|
 | `official` | 蓝色盾牌 | Presto-io 组织发布 | `#3b82f6` |
-| `verified` | 绿色对勾 | Release 的 SHA256SUMS 有有效 GPG 签名（公钥在 registry 中注册） | `#22c55e` |
-| `community` | 灰色标签 | 仅收录，未审核 | `var(--color-muted)` |
-| `unrecorded` | 警告标识 | 用户手动 URL 安装（不在 registry 中） | `var(--color-warning)` |
+| `verified` | 绿色对勾 | template-registry CI 从源码编译，PR 审批制 | `#22c55e` |
+| `community` | 灰色标签 | 仅收录，未审核，二进制来自第三方 Release | `var(--color-muted)` |
+| `unrecorded` | 警告标识 | 用户手动拖入安装（不在 registry 中） | `var(--color-warning)` |
+
+**商店可见性：**
+
+- `official` + `verified`：默认在商店中可见
+- `community`：需用户开启"社区模板"开关后可见
+- `unrecorded`：不在商店中
 
 获取 `verified` 标识的步骤：
 
-1. 生成 GPG 密钥对
-2. 在 template-registry 注册公钥
-3. Release 时对 SHA256SUMS 签名，生成 SHA256SUMS.sig
+1. 开发者发布模板到自己的 GitHub 仓库（带 `presto-template` topic）
+2. template-registry cron 自动检测新版本，创建 PR
+3. 维护者 review 并 merge PR
+4. template-registry CI 从源码编译，发布到 template-registry Release
+
+> 详细设计见 `docs/specs/verified-templates-design.md`
 
 ### 6.4 Registry 目录结构
 
@@ -365,17 +374,25 @@ plugin-registry CI   → 生成文件 → push 到 registry-deploy/plugins/
 ### 8.1 从商店安装
 
 ```
-前端 fetch registry.json → 显示商店列表
-用户点安装 → POST /api/templates/{name}/install { owner, repo }
+前端 fetch registry.json → 根据 communityTemplates 开关过滤显示
+  - 默认：仅 official + verified
+  - 开启社区模板：显示所有（含 community）
+
+用户点安装 → POST /api/templates/{name}/install { owner, repo, platforms, trust }
 后端：
-  1. GET github.com/repos/{owner}/{repo}/releases/latest
-  2. 匹配当前平台的二进制资产（{os}_{arch}）
-  3. 下载二进制（限 100MB）
-  4. 验证 SHA256（从 SHA256SUMS）
-  5. 运行 ./binary --manifest → 提取 manifest.json
-  6. 写入 ~/.presto/templates/{name}/manifest.json
-  7. 写入 ~/.presto/templates/{name}/presto-template-{name}
-  8. 设置执行权限 0755
+  official/verified 路径（platforms 来自 registry，url 指向可信 Release）：
+    1. 下载二进制（限 100MB）
+    2. 强制验证 SHA256（来自 registry，失败则拒绝安装）
+    3. 运行 ./binary --manifest → 提取 manifest.json
+    4. 写入 ~/.presto/templates/{name}/
+
+  community 路径（platforms 来自第三方 Release）：
+    1. GET github.com/repos/{owner}/{repo}/releases/latest
+    2. 匹配当前平台的二进制资产
+    3. 下载二进制（限 100MB）
+    4. 可选验证 SHA256（从 SHA256SUMS，缺失则跳过）
+    5. 运行 ./binary --manifest → 提取 manifest.json
+    6. 写入 ~/.presto/templates/{name}/
 ```
 
 ### 8.2 本地目录结构

@@ -207,7 +207,13 @@ frontend/src/routes/showcase/
 
 ### 3.3 安全与信任
 
-见 `extension-spec.md` 第六节。
+见 `extension-spec.md` 第六节。详细的 verified 模板编译方案见 `verified-templates-design.md`。
+
+**信任模型概要：**
+
+- `official`/`verified` 模板：SHA256 来自可信源（Presto-io CI 或 template-registry CI），安装时强制校验
+- `community` 模板：SHA256 来自第三方 Release（同源校验），安装时可选校验 + 风险提示
+- 商店默认只显示 `official` + `verified`，`community` 需用户开启开关
 
 ### 3.3 字体处理
 
@@ -267,7 +273,19 @@ template-registry/
 - **Job 1**（低权限，不传 secrets）：运行模板二进制，生成 Typst 源码和 example.md，通过 artifacts 传递
 - **Job 2**（高权限）：运行 Typst CLI（可信），编译 SVG，推送到 registry-deploy
 
-### 4.5 增量更新
+### 4.5 Verified 模板编译
+
+template-registry 新增 verified 模板编译能力：
+
+- `verified-templates.json` 记录收录的第三方模板（repo + 锁定 tag）
+- cron 自动检测新版本，创建 PR，维护者审批后 merge
+- CI 在隔离容器中从源码编译（`CGO_ENABLED=0`、`--network none`、`--read-only`）
+- 编译产物发布到 template-registry 自身的 GitHub Release
+- registry.json 中 verified 模板的 url 指向 template-registry Release
+
+> 详细设计见 `verified-templates-design.md`
+
+### 4.6 增量更新
 
 每 6 小时或手动触发。增量检测：对比最新 Release tag 与 registry 记录的版本。通过 `topic:presto-template` 发现新仓库。
 
