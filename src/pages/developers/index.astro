@@ -479,30 +479,60 @@ import Footer from '../../components/Footer.astro';
             <div class="trust-item">
               <span class="trust-badge trust-badge--official">Official</span>
               <span>
-                <span class="zh">Presto-io 组织发布</span>
-                <span class="en">Published by Presto-io org</span>
+                <span class="zh">Presto 团队出品</span>
+                <span class="en">Built by the Presto team</span>
               </span>
             </div>
             <div class="trust-item">
               <span class="trust-badge trust-badge--verified">Verified</span>
               <span>
-                <span class="zh">SHA256SUMS 有有效 GPG 签名</span>
-                <span class="en">SHA256SUMS has valid GPG signature</span>
+                <span class="zh">源码经 Presto CI 编译，安全可信</span>
+                <span class="en">Source compiled by Presto CI, secure and trusted</span>
               </span>
             </div>
             <div class="trust-item">
               <span class="trust-badge trust-badge--community">Community</span>
               <span>
-                <span class="zh">已收录，未审核</span>
-                <span class="en">Listed, not audited</span>
+                <span class="zh">第三方开发者发布，需在设置中手动开启</span>
+                <span class="en">Published by third-party developers, requires manual opt-in</span>
               </span>
             </div>
+            <div class="trust-item">
+              <span class="trust-badge trust-badge--local">Local</span>
+              <span>
+                <span class="zh">用户通过 ZIP 导入的本地模板</span>
+                <span class="en">Imported locally by user via ZIP file</span>
+              </span>
+            </div>
+          </div>
+
+          <div class="verified-flow">
+            <h3>
+              <span class="zh">如何获得 Verified 标识</span>
+              <span class="en">How to Get Verified</span>
+            </h3>
+            <ol>
+              <li>
+                <span class="zh">在 <code>template-registry</code> 仓库提交 PR，附上模板源码仓库地址</span>
+                <span class="en">Submit a PR to the <code>template-registry</code> repo with your template source repository URL</span>
+              </li>
+              <li>
+                <span class="zh">Presto CI 自动拉取源码，在沙箱中编译各平台二进制</span>
+                <span class="en">Presto CI automatically pulls the source and compiles binaries for all platforms in a sandbox</span>
+              </li>
+              <li>
+                <span class="zh">CI 通过后自动签名并发布到 Registry</span>
+                <span class="en">After CI passes, binaries are automatically signed and published to the Registry</span>
+              </li>
+              <li>
+                <span class="zh">模板获得 <span class="trust-badge trust-badge--verified">Verified</span> 标识</span>
+                <span class="en">Template receives the <span class="trust-badge trust-badge--verified">Verified</span> badge</span>
+              </li>
+            </ol>
           </div>
         </div>
       </div>
     </section>
-
-    <!-- Project Structure -->
     <section class="dev-section dev-section--alt" id="structure">
       <div class="container">
         <h2 class="dev-section-title">
@@ -1121,6 +1151,54 @@ import Footer from '../../components/Footer.astro';
     background: var(--color-bg-secondary);
     color: var(--color-text-muted);
     border: 1px solid var(--color-border);
+  }
+
+  .trust-badge--local {
+    background: rgba(168, 85, 247, 0.12);
+    color: #a855f7;
+  }
+
+  .verified-flow {
+    margin-top: 1.5rem;
+  }
+
+  .verified-flow h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+
+  .verified-flow ol {
+    list-style: none;
+    counter-reset: step;
+    padding-left: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .verified-flow li {
+    counter-increment: step;
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+    padding-left: 2rem;
+    position: relative;
+  }
+
+  .verified-flow li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    background: rgba(34, 197, 94, 0.12);
+    color: #22c55e;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   /* ============================================
