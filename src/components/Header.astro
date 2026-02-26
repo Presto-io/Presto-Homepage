@@ -151,8 +151,12 @@ const navItems = [
     function applyState() {
       var collapsed = scrollCollapsed && !hoverExpanded;
       header.classList.toggle('is-collapsed', collapsed);
-      /* Hide indicator during state transition to avoid stale position */
-      if (indicator) indicator.style.opacity = '0';
+      /* Continuously update indicator position during transition */
+      if (hoveredLink) {
+        startIndicatorTracking();
+      } else if (indicator) {
+        indicator.style.opacity = '0';
+      }
     }
 
     /* Set initial state synchronously — prevents flicker on page load */
@@ -208,6 +212,9 @@ const navItems = [
     /* ------------------------------------------------
        Magnetic nav indicator — soft pill follows hover
        ------------------------------------------------ */
+    var hoveredLink = null;
+    var indicatorRafId = null;
+
     function moveIndicator(el) {
       if (!el || !indicator || !navEl) return;
       var navRect  = navEl.getBoundingClientRect();
@@ -221,12 +228,41 @@ const navItems = [
       indicator.style.opacity = '1';
     }
 
+    /* Continuously update indicator position during CSS transitions */
+    function startIndicatorTracking() {
+      stopIndicatorTracking();
+      function tick() {
+        if (hoveredLink) {
+          moveIndicator(hoveredLink);
+          indicatorRafId = requestAnimationFrame(tick);
+        }
+      }
+      indicatorRafId = requestAnimationFrame(tick);
+    }
+
+    function stopIndicatorTracking() {
+      if (indicatorRafId) {
+        cancelAnimationFrame(indicatorRafId);
+        indicatorRafId = null;
+      }
+    }
+
+    /* Stop rAF loop when transition ends */
+    capsule.addEventListener('transitionend', function () {
+      stopIndicatorTracking();
+      /* One final position update after transition settles */
+      if (hoveredLink) moveIndicator(hoveredLink);
+    });
+
     function hideIndicator() {
       if (indicator) indicator.style.opacity = '0';
+      hoveredLink = null;
+      stopIndicatorTracking();
     }
 
     for (var i = 0; i < navLinks.length; i++) {
       navLinks[i].addEventListener('mouseenter', function () {
+        hoveredLink = this;
         moveIndicator(this);
       });
     }
