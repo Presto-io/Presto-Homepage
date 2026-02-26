@@ -423,11 +423,11 @@ const navItems = [
     transition:
       opacity 0.3s ease,
       max-width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
       margin 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
-
-  .header.is-collapsed .logo {
     max-width: 0;
+    max-height: 0;
     opacity: 0;
     margin: 0;
   }
@@ -569,12 +569,14 @@ const navItems = [
     transition:
       opacity 0.3s ease,
       max-width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
       gap 0.4s ease;
     max-width: 200px;
   }
 
   .header.is-collapsed .header-actions {
     max-width: 0;
+    max-height: 0;
     opacity: 0;
     gap: 0;
   }
