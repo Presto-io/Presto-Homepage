@@ -1365,3 +1365,32 @@ import Footer from '../../components/Footer.astro';
     }
   }
 </style>
+
+<script is:inline>
+  function makeCopyLabel(btn) {
+    btn.textContent = '';
+    var zh = document.createElement('span');
+    zh.className = 'zh';
+    zh.textContent = '复制';
+    var en = document.createElement('span');
+    en.className = 'en';
+    en.textContent = 'Copy';
+    btn.appendChild(zh);
+    btn.appendChild(en);
+  }
+
+  document.querySelectorAll('.dev-page .code-block').forEach(function (block) {
+    var code = block.querySelector('code');
+    if (!code) return;
+    var btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    makeCopyLabel(btn);
+    btn.addEventListener('click', function () {
+      navigator.clipboard.writeText(code.textContent).then(function () {
+        btn.textContent = '✓';
+        setTimeout(function () { makeCopyLabel(btn); }, 1500);
+      });
+    });
+    block.appendChild(btn);
+  });
+</script>
