@@ -498,10 +498,10 @@ import Footer from '../../components/Footer.astro';
               </span>
             </div>
             <div class="trust-item">
-              <span class="trust-badge trust-badge--local">Local</span>
+              <span class="trust-badge trust-badge--unverified">Unverified</span>
               <span>
-                <span class="zh">用户通过 ZIP 导入的本地模板</span>
-                <span class="en">Imported locally by user via ZIP file</span>
+                <span class="zh">用户手动安装，未经 Registry 收录</span>
+                <span class="en">Manually installed by user, not listed in Registry</span>
               </span>
             </div>
           </div>
@@ -1153,9 +1153,9 @@ import Footer from '../../components/Footer.astro';
     border: 1px solid var(--color-border);
   }
 
-  .trust-badge--local {
-    background: rgba(168, 85, 247, 0.12);
-    color: #a855f7;
+  .trust-badge--unverified {
+    background: rgba(224, 175, 104, 0.12);
+    color: #e0af68;
   }
 
   .verified-flow {
