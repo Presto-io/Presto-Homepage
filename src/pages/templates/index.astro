@@ -10,9 +10,16 @@ import Footer from '../../components/Footer.astro';
       src="/showcase/store-templates"
       class="store-iframe"
       title="模板商店"
-      sandbox="allow-scripts allow-same-origin"
+      sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
       loading="eager"
     ></iframe>
+    <script>
+      window.addEventListener('message', (e) => {
+        if (e.data?.type === 'presto-open-template' && e.data.url) {
+          window.location.href = e.data.url;
+        }
+      });
+    </script>
   </main>
   <Footer />
 </Layout>
