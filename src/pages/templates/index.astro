@@ -18,6 +18,12 @@ import Footer from '../../components/Footer.astro';
         if (e.data?.type === 'presto-open-template' && e.data.url) {
           window.location.href = e.data.url;
         }
+        if (e.data?.type === 'presto-resize' && e.data.height > 0) {
+          const mq = window.matchMedia('(max-width: 768px)');
+          if (!mq.matches) return;
+          const iframe = document.querySelector('.store-iframe') as HTMLIFrameElement;
+          if (iframe) iframe.style.minHeight = e.data.height + 'px';
+        }
       });
     </script>
   </main>
@@ -42,7 +48,9 @@ import Footer from '../../components/Footer.astro';
   @media (max-width: 768px) {
     .store-page {
       padding-top: calc(var(--header-height-mobile) + 0.5rem);
-      height: 100vh;
+      min-height: 100dvh;
+      height: auto;
+      overflow: visible;
     }
     .store-iframe {
       min-height: 0;
