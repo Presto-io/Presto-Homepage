@@ -10,11 +10,14 @@ import Footer from '../../components/Footer.astro';
       src="/showcase/store-templates"
       class="store-iframe"
       title="模板商店"
-      sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+      sandbox="allow-scripts allow-same-origin"
       loading="eager"
     ></iframe>
     <script>
       window.addEventListener('message', (e) => {
+        // SEC: Only accept messages from same origin (embedded iframe)
+        if (e.origin !== window.location.origin) return;
+
         if (e.data?.type === 'presto-open-template' && e.data.url) {
           window.location.href = e.data.url;
         }
