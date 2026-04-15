@@ -1,10 +1,7 @@
 name: Sync Showcase
 
 on:
-  # Presto 仓库构建完成后通过 repository_dispatch 触发
-  repository_dispatch:
-    types: [showcase-updated]
-  # 手动触发
+  # 手动触发，避免主仓库日常提交自动刷新官网
   workflow_dispatch:
 
 permissions: {}
