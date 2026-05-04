@@ -1,8 +1,11 @@
 name: Sync Showcase
 
 on:
-  # 手动触发，避免主仓库日常提交自动刷新官网
+  # 手动触发（保留，用于手动同步）
   workflow_dispatch:
+  # 自动触发：Presto 主仓库 showcase 构建完成后上报
+  repository_dispatch:
+    types: [showcase-ready]
 
 permissions: {}
 
