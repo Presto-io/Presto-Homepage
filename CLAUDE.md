@@ -3,7 +3,7 @@
 > 组织级规则见 `docs/ai-guide.md`
 > 本仓库 `docs/` 目录是 Presto-io 组织的文档中心
 
-Presto 官网，部署在 Vercel。
+Presto 官网，支持部署在 Netlify 与 Vercel。
 
 ## 技术栈
 
@@ -24,6 +24,8 @@ src/
 public/           ← 静态资源（favicon, icons, screenshots）
 assets/           ← 源素材（非直接服务）
 docs/             ← 组织级文档中心（ai-guide、specs、context、CONVENTIONS）
+netlify.toml      ← Netlify 构建、rewrite 与安全响应头配置
+vercel.json       ← Vercel clean URLs 与安全响应头配置
 ```
 
 ## 开发命令
@@ -45,5 +47,7 @@ npm run preview   # 预览构建产物
 ## 架构决策
 
 - Showcase 区域通过 iframe 嵌入 Presto 应用的 `/showcase/*` 路由（真实 UI 组件，非截图）
+- Netlify 通过 `netlify.toml` 将 `/showcase/*` rewrite 到 `/showcase/*.html`
+- Vercel 通过 `vercel.json` 的 `cleanUrls` 保持无后缀静态路径可访问
 - 模板商店（`/templates`）通过 iframe 嵌入 Presto 的 `/showcase/store-templates`，商店 UI 由 Presto 仓库维护
 - Coming Soon 导航项（Plugins, Agent Skills）为灰色不可点击按钮

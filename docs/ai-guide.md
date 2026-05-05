@@ -15,7 +15,7 @@
 | 仓库 | 职责 | 技术栈 |
 |------|------|--------|
 | `Presto` | 主应用（桌面 Wails + Web Docker） | Go + SvelteKit 2 + Svelte 5 |
-| `Presto-homepage` | 官网（Vercel 部署） | Astro 5 纯静态 |
+| `Presto-homepage` | 官网（Netlify / Vercel 部署） | Astro 5 纯静态 |
 | `Presto-remotion` | 宣传视频 | Remotion + React 19 |
 | `presto-official-templates` | 官方模板 monorepo | Go |
 | `presto-template-starter-{go,rust,typescript}` | 模板开发脚手架 | 各语言 |
