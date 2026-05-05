@@ -35,10 +35,24 @@ jobs:
         run: |
           gh api repos/Presto-io/Presto/releases/tags/${{ steps.tag.outputs.tag }} \
             --jq '{name, body, prerelease, draft}' > release.json
-          echo "name=$(jq -r .name release.json)" >> "$GITHUB_OUTPUT"
-          echo "prerelease=$(jq -r .prerelease release.json)" >> "$GITHUB_OUTPUT"
+          {
+            echo "name=$(jq -r .name release.json)"
+            echo "prerelease=$(jq -r .prerelease release.json)"
+            echo "draft=$(jq -r .draft release.json)"
+            echo "publish=$(jq -r 'if (.draft == false and .prerelease == false) then "true" else "false" end' release.json)"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Skip non-stable release
+        if: steps.release.outputs.publish != 'true'
+        env:
+          TAG: ${{ steps.tag.outputs.tag }}
+          PRERELEASE: ${{ steps.release.outputs.prerelease }}
+          DRAFT: ${{ steps.release.outputs.draft }}
+        run: |
+          echo "Skipping ${TAG}: prerelease=${PRERELEASE}, draft=${DRAFT}. Homepage only publishes stable releases."
 
       - name: Download assets from Presto
+        if: steps.release.outputs.publish == 'true'
         env:
           GH_TOKEN: ${{ secrets.PRESTO_PAT }}
           TAG: ${{ steps.tag.outputs.tag }}
@@ -47,6 +61,7 @@ jobs:
           gh release download "$TAG" --repo Presto-io/Presto --dir assets
 
       - name: Create release in this repo
+        if: steps.release.outputs.publish == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ steps.tag.outputs.tag }}
@@ -62,6 +77,7 @@ jobs:
           gh release create "$TAG" "${ARGS[@]}" assets/*
 
       - name: Update version in source code
+        if: steps.release.outputs.publish == 'true'
         env:
           TAG: ${{ steps.tag.outputs.tag }}
         run: |
@@ -72,6 +88,7 @@ jobs:
           sed -i "s/^export const version = '.*';$/export const version = '${VER}';/" src/data/release.ts
 
       - name: Commit and push version bump
+        if: steps.release.outputs.publish == 'true'
         env:
           TAG: ${{ steps.tag.outputs.tag }}
         run: |
