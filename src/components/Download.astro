@@ -101,6 +101,23 @@ const platforms = [
       ))}
     </div>
 
+    <!-- Windows code signing note -->
+    <div class="info-card animate-on-scroll" style="transition-delay: 0.2s">
+      <div class="info-icon info-icon--success">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
+      </div>
+      <div class="info-content">
+        <p class="info-title">
+          <span class="zh">Windows 代码签名</span>
+          <span class="en">Windows Code Signing</span>
+        </p>
+        <p class="info-desc">
+          <span class="zh">Presto 的 Windows 发布构建使用 SignPath Foundation 提供的代码签名，以帮助用户验证下载的安装包来自受信任的开源发布流程。</span>
+          <span class="en">Presto uses the SignPath Foundation for code signing on Windows releases, helping users verify that downloaded installers come from a trusted open-source release process.</span>
+        </p>
+      </div>
+    </div>
+
     <!-- macOS security tip -->
     <div class="info-card animate-on-scroll" style="transition-delay: 0.25s">
       <div class="info-icon info-icon--warn">
@@ -362,6 +379,11 @@ const platforms = [
     color: var(--color-accent);
   }
 
+  .info-icon--success {
+    background: rgba(34, 197, 94, 0.1);
+    color: #16a34a;
+  }
+
   @media (prefers-color-scheme: dark) {
     .info-icon--warn {
       background: rgba(245, 158, 11, 0.15);
@@ -369,6 +391,10 @@ const platforms = [
     }
     .info-icon--accent {
       background: var(--accent-bg-tag);
+    }
+    .info-icon--success {
+      background: rgba(34, 197, 94, 0.14);
+      color: #4ade80;
     }
   }
 
