@@ -1,1 +1,0 @@
-import"../chunks/B4tPvYaQ.js";import"../chunks/ibwe1TAv.js";import"../chunks/BYfga2_E.js";import{t as e}from"../chunks/CbeRPIg0.js";function t(t){e(t,{mode:`desktop`,registryUrl:`https://presto.c-1o.top/agent-skills/registry.json`,title:`技能商店`,readmeUrl:e=>`https://raw.githubusercontent.com/${e.repo}/main/${e.path}/SKILL.md`,backRoute:`/settings`})}export{t as component};
