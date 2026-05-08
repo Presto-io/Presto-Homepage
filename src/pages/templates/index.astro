@@ -14,11 +14,27 @@ import Footer from '../../components/Footer.astro';
       loading="eager"
     ></iframe>
     <script>
+      const TEMPLATE_INSTALL_RE = /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
+
+      function isSafeTemplateInstallUrl(value) {
+        if (typeof value !== 'string') return false;
+        try {
+          const url = new URL(value);
+          return url.protocol === 'presto:' &&
+            url.hostname === 'install' &&
+            !url.search &&
+            !url.hash &&
+            TEMPLATE_INSTALL_RE.test(url.pathname.slice(1));
+        } catch {
+          return false;
+        }
+      }
+
       window.addEventListener('message', (e) => {
         // SEC: Only accept messages from same origin (embedded iframe)
         if (e.origin !== window.location.origin) return;
 
-        if (e.data?.type === 'presto-open-template' && e.data.url) {
+        if (e.data?.type === 'presto-open-template' && isSafeTemplateInstallUrl(e.data.url)) {
           window.location.href = e.data.url;
         }
         if (e.data?.type === 'presto-resize' && e.data.height > 0) {

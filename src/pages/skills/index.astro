@@ -14,11 +14,31 @@ import Footer from '../../components/Footer.astro';
       loading="eager"
     ></iframe>
     <script>
+      const GITHUB_SEGMENT_RE = /^[A-Za-z0-9_.-]+$/;
+
+      function isSafeGithubRepoUrl(value) {
+        if (typeof value !== 'string') return false;
+        try {
+          const url = new URL(value);
+          const parts = url.pathname.split('/').filter(Boolean);
+          return url.protocol === 'https:' &&
+            url.hostname === 'github.com' &&
+            !url.username &&
+            !url.password &&
+            !url.search &&
+            !url.hash &&
+            parts.length === 2 &&
+            parts.every((part) => GITHUB_SEGMENT_RE.test(part));
+        } catch {
+          return false;
+        }
+      }
+
       window.addEventListener('message', (e) => {
         // SEC: Only accept messages from same origin (embedded iframe)
         if (e.origin !== window.location.origin) return;
 
-        if (e.data?.type === 'presto-open-skill' && e.data.url) {
+        if (e.data?.type === 'presto-open-skill' && isSafeGithubRepoUrl(e.data.url)) {
           window.open(e.data.url, '_blank', 'noopener,noreferrer');
         }
         if (e.data?.type === 'presto-resize' && e.data.height > 0) {
