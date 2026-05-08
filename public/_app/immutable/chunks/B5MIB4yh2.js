@@ -1,1 +1,0 @@
-import{$ as e,Q as t,V as n}from"./DN1SkWIp.js";var r=e(null),i={get data(){return n(r)},set(e){t(r,e,!0)},clear(){t(r,null)}};export{i as t};
