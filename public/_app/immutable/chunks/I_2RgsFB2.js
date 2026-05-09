@@ -1,1 +1,0 @@
-import{B as e,Q as t,Z as n}from"./B4tPvYaQ.js";var r=t(null),i={get data(){return e(r)},set(e){n(r,e,!0)},clear(){n(r,null)}};export{i as t};
