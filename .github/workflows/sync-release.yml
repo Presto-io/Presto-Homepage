@@ -60,22 +60,6 @@ jobs:
           mkdir -p assets
           gh release download "$TAG" --repo Presto-io/Presto --dir assets
 
-      - name: Create release in this repo
-        if: steps.release.outputs.publish == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG: ${{ steps.tag.outputs.tag }}
-          RELEASE_NAME: ${{ steps.release.outputs.name }}
-        run: |
-          BODY=$(jq -r .body release.json)
-          ARGS=(--title "$RELEASE_NAME" --notes "$BODY")
-          if [ "$(jq -r .prerelease release.json)" = "true" ]; then
-            ARGS+=(--prerelease)
-          fi
-          # Delete existing release if present, then create
-          gh release delete "$TAG" --yes 2>/dev/null || true
-          gh release create "$TAG" "${ARGS[@]}" assets/*
-
       - name: Update version in source code
         if: steps.release.outputs.publish == 'true'
         env:
@@ -90,14 +74,37 @@ jobs:
       - name: Commit and push version bump
         if: steps.release.outputs.publish == 'true'
         env:
+          CI_GPG_KEY_ID: ${{ vars.CI_GPG_KEY_ID }}
+          CI_GPG_PASSPHRASE: ${{ secrets.CI_GPG_PASSPHRASE }}
+          CI_GPG_PRIVATE_KEY: ${{ secrets.CI_GPG_PRIVATE_KEY }}
+          CI_GIT_USER_EMAIL: ${{ vars.CI_GIT_USER_EMAIL }}
+          CI_GIT_USER_NAME: ${{ vars.CI_GIT_USER_NAME }}
           TAG: ${{ steps.tag.outputs.tag }}
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          bash scripts/ci/setup-git-signing.sh
           git add src/data/release.ts src/components/Download.astro src/components/Hero.astro
-          if git diff --cached --quiet; then
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: 更新版本号至 ${TAG}"
+            git push
+          else
             echo "No version changes"
-            exit 0
           fi
-          git commit -m "chore: 更新版本号至 ${TAG}"
-          git push
+
+          git tag -f -s "$TAG" -m "Presto Homepage ${TAG}" HEAD
+          git push --force origin "refs/tags/${TAG}"
+
+      - name: Create release in this repo
+        if: steps.release.outputs.publish == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.tag.outputs.tag }}
+          RELEASE_NAME: ${{ steps.release.outputs.name }}
+        run: |
+          BODY=$(jq -r .body release.json)
+          ARGS=(--title "$RELEASE_NAME" --notes "$BODY")
+          if [ "$(jq -r .prerelease release.json)" = "true" ]; then
+            ARGS+=(--prerelease)
+          fi
+          # Delete existing release if present, then create against the signed tag above.
+          gh release delete "$TAG" --yes 2>/dev/null || true
+          gh release create "$TAG" "${ARGS[@]}" assets/*

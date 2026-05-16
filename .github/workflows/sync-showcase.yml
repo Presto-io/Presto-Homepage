@@ -30,13 +30,18 @@ jobs:
           path: public
 
       - name: Commit and push
+        env:
+          CI_GPG_KEY_ID: ${{ vars.CI_GPG_KEY_ID }}
+          CI_GPG_PASSPHRASE: ${{ secrets.CI_GPG_PASSPHRASE }}
+          CI_GPG_PRIVATE_KEY: ${{ secrets.CI_GPG_PRIVATE_KEY }}
+          CI_GIT_USER_EMAIL: ${{ vars.CI_GIT_USER_EMAIL }}
+          CI_GIT_USER_NAME: ${{ vars.CI_GIT_USER_NAME }}
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
           git add public/_app/ public/showcase/
           if git diff --cached --quiet; then
             echo "No changes to showcase files"
             exit 0
           fi
+          bash scripts/ci/setup-git-signing.sh
           git commit -m "chore: sync showcase static files from Presto"
           git push
