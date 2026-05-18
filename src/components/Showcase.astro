@@ -1,54 +1,54 @@
 ---
 const slides = [
   {
-    id: 'editor-gongwen',
-    zh: '编辑器 · 公文',
-    en: 'Editor · Document',
-    iframeSrc: '/showcase/editor-gongwen',
-    zh_title: '所见即所得',
-    en_title: 'What You See Is What You Get',
-    zh_desc: '左右分栏实时预览，拖拽分割线自由调整，沉浸式 Markdown 编辑体验。',
-    en_desc: 'Side-by-side live preview with draggable splitter. An immersive Markdown editing experience.',
+    id: 'live-editor',
+    zh: '编辑器',
+    en: 'Editor',
+    iframeSrc: '/showcase/hero',
+    zh_title: '编辑、预览、导出在同一窗口',
+    en_title: 'Edit, Preview, Export in One Window',
+    zh_desc: 'Markdown 输入后即时生成 Typst 排版预览，适合公文、教案和可复用文档工作流。',
+    en_desc: 'Write Markdown and see Typst-rendered previews instantly for official documents, lesson plans, and reusable workflows.',
   },
   {
-    id: 'editor-jiaoan',
-    zh: '编辑器 · 教案',
-    en: 'Editor · Lesson Plan',
-    iframeSrc: '/showcase/editor-jiaoan',
-    zh_title: '教案模板',
-    en_title: 'Lesson Plan Template',
-    zh_desc: '将 Markdown 格式的实操教案转换为标准表格排版，适合教学场景。',
-    en_desc: 'Convert Markdown lesson plans into standard table layouts, perfect for teaching.',
+    id: 'template-store',
+    zh: '模板商店',
+    en: 'Template Store',
+    iframeSrc: '/showcase/store-templates',
+    zh_title: '官方模板与社区模板集中管理',
+    en_title: 'Official and Community Templates Together',
+    zh_desc: '浏览模板、查看 README 与实时预览，并通过 Presto 协议一键安装到桌面端。',
+    en_desc: 'Browse templates, inspect READMEs and live previews, then install into the desktop app with the Presto protocol.',
+  },
+  {
+    id: 'skill-store',
+    zh: 'Agent 技能',
+    en: 'Agent Skills',
+    iframeSrc: '/showcase/store-skills',
+    zh_title: '让写作、教案和公文流程可扩展',
+    en_title: 'Extend Writing, Lesson, and Document Workflows',
+    zh_desc: '官网已接入 Agent 技能商店，用同一套展示框架呈现可安装的智能工作流。',
+    en_desc: 'The homepage now embeds the Agent Skills store, presenting installable intelligent workflows in the same showcase system.',
   },
   {
     id: 'batch',
     zh: '批量转换',
     en: 'Batch',
     iframeSrc: '/showcase/batch',
-    zh_title: '一键批量导出',
-    en_title: 'One-Click Batch Export',
-    zh_desc: '拖拽多个文件或 ZIP 包，选择模板，一键批量转换为 PDF 并打包下载。',
-    en_desc: 'Drag multiple files or ZIPs, pick a template, batch convert to PDF with one click.',
-  },
-  {
-    id: 'templates',
-    zh: '模板',
-    en: 'Templates',
-    iframeSrc: '/showcase/templates',
-    zh_title: '模板管理',
-    en_title: 'Template Management',
-    zh_desc: '管理内置和社区模板，支持搜索、安装、卸载和从 ZIP 导入。',
-    en_desc: 'Manage built-in and community templates. Search, install, uninstall, import from ZIP.',
+    zh_title: '多文件一次性出 PDF',
+    en_title: 'Turn Many Files into PDFs at Once',
+    zh_desc: '支持 Markdown、TXT 和 ZIP 包导入，批量选择模板并打包导出结果。',
+    en_desc: 'Import Markdown, TXT, or ZIP packages, choose templates in bulk, and export packaged results.',
   },
   {
     id: 'drop',
     zh: '拖入文件',
     en: 'Drag & Drop',
     iframeSrc: '/showcase/drop',
-    zh_title: '拖拽导入',
-    en_title: 'Drag & Drop Import',
-    zh_desc: '将 Markdown 文件直接拖入窗口，自动检测模板并开始转换。',
-    en_desc: 'Drag Markdown files into the window. Auto-detect templates and start converting.',
+    zh_title: '把文件拖进来就能开始',
+    en_title: 'Drop Files and Start Immediately',
+    zh_desc: '桌面端保持低打扰交互：拖入文件、自动识别、选择模板、继续编辑。',
+    en_desc: 'The desktop flow stays low-friction: drop files, auto-detect content, choose a template, and continue editing.',
   },
 ];
 ---
@@ -62,12 +62,12 @@ const slides = [
         <span class="en">Showcase</span>
       </div>
       <h2 class="section-title">
-        <span class="zh">简洁强大的<span class="gradient-text">界面</span></span>
-        <span class="en">A Clean & <span class="gradient-text">Powerful</span> Interface</span>
+        <span class="zh">当前产品能力的<span class="gradient-text">实时橱窗</span></span>
+        <span class="en">A Live Window into <span class="gradient-text">Current Product Flows</span></span>
       </h2>
       <p class="section-desc">
-        <span class="zh">桌面端原生体验，支持亮色和暗色主题跟随系统切换。</span>
-        <span class="en">Native desktop experience with light and dark themes that follow your system.</span>
+        <span class="zh">首页嵌入的是 Presto 应用真实 showcase 静态产物；商店、技能和编辑器展示会随上游构建同步。</span>
+        <span class="en">The homepage embeds real Presto showcase builds, including the store, skills, and editor surfaces.</span>
       </p>
     </div>
   </div>
@@ -330,6 +330,12 @@ const slides = [
     margin-bottom: 2.5rem;
   }
 
+  .showcase {
+    position: relative;
+    background:
+      linear-gradient(180deg, transparent 0%, var(--glass-wash) 44%, transparent 100%);
+  }
+
   /* ============================================
      CAROUSEL — peek adjacent slides
      ============================================ */
@@ -343,7 +349,7 @@ const slides = [
   .carousel-viewport {
     overflow: hidden;
     /* Extra padding so box-shadows on active card aren't clipped */
-    padding: 1rem 0 1.5rem;
+    padding: 1.25rem 0 1.75rem;
   }
 
   .carousel-track {
@@ -373,17 +379,43 @@ const slides = [
      ============================================ */
 
   .slide-card {
-    background: var(--color-bg-secondary);
-    border: 1px solid var(--card-border);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
     border-radius: var(--radius);
     padding: 2rem;
     overflow: hidden;
-    transition: box-shadow 0.4s ease, border-color 0.4s ease;
+    position: relative;
+    box-shadow: var(--glass-shadow);
+    backdrop-filter: blur(30px) saturate(175%);
+    -webkit-backdrop-filter: blur(30px) saturate(175%);
+    transition: box-shadow 0.4s ease, border-color 0.4s ease, transform 0.4s ease;
+  }
+
+  .slide-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background:
+      linear-gradient(135deg, rgba(255,255,255,0.62), transparent 28%),
+      linear-gradient(315deg, rgba(125, 211, 252, 0.16), transparent 34%);
+    opacity: 0.78;
+  }
+
+  .slide-card::after {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    border-radius: calc(var(--radius) - 1px);
+    pointer-events: none;
+    box-shadow: inset 0 1px 0 var(--glass-highlight), inset 0 -1px 0 rgba(15, 23, 42, 0.06);
   }
 
   .carousel-slide.is-active .slide-card {
-    box-shadow: var(--card-shadow-hover);
-    border-color: var(--color-border);
+    box-shadow: var(--glass-shadow-strong);
+    border-color: var(--glass-border-strong);
+    transform: translateY(-2px);
   }
 
   /* --- Text area --- */
@@ -393,6 +425,8 @@ const slides = [
     flex-direction: column;
     gap: 0.5rem;
     padding-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
   }
 
   .slide-tag {
@@ -404,7 +438,10 @@ const slides = [
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--color-accent);
-    background: rgba(59, 130, 246, 0.08);
+    background: var(--glass-chip-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(18px) saturate(180%);
+    -webkit-backdrop-filter: blur(18px) saturate(180%);
     padding: 0.25rem 0.75rem;
     border-radius: 999px;
   }
@@ -419,7 +456,7 @@ const slides = [
     font-size: clamp(1.375rem, 3vw, 1.75rem);
     font-weight: 750;
     line-height: 1.2;
-    letter-spacing: -0.02em;
+    letter-spacing: 0;
     color: var(--color-text);
   }
 
@@ -435,7 +472,11 @@ const slides = [
   .slide-image {
     overflow: hidden;
     position: relative;
-    border-radius: calc(var(--radius) - 2rem);
+    border-radius: 18px;
+    z-index: 1;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.72), 0 18px 42px rgba(15, 23, 42, 0.12);
+    background: rgba(255, 255, 255, 0.24);
   }
 
   .showcase-iframe {
@@ -471,16 +512,23 @@ const slides = [
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: var(--color-bg-secondary);
-    border: 1px solid var(--color-border);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
     color: var(--color-text-secondary);
-    transition: all 0.25s ease;
+    box-shadow: var(--glass-shadow-soft);
+    backdrop-filter: blur(18px) saturate(180%);
+    -webkit-backdrop-filter: blur(18px) saturate(180%);
+    transition:
+      color 200ms ease,
+      background-color 200ms ease,
+      border-color 200ms ease,
+      transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .carousel-pause:hover {
     color: var(--color-text);
-    background: var(--color-bg-elevated);
-    border-color: var(--color-text-muted);
+    background: var(--glass-bg-strong);
+    border-color: var(--glass-border-strong);
     transform: scale(1.08);
   }
 
@@ -488,20 +536,28 @@ const slides = [
     display: flex;
     align-items: center;
     gap: 0.375rem;
-    background: var(--color-bg-secondary);
-    border: 1px solid var(--color-border);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
     border-radius: 999px;
     padding: 0.375rem 0.625rem;
+    box-shadow: var(--glass-shadow-soft);
+    backdrop-filter: blur(18px) saturate(180%);
+    -webkit-backdrop-filter: blur(18px) saturate(180%);
   }
 
   .carousel-dot {
     position: relative;
-    width: 8px;
+    width: 32px;
     height: 8px;
     border-radius: 999px;
     background: var(--color-text-muted);
     opacity: 0.35;
-    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: scaleX(0.25);
+    transform-origin: center;
+    transition:
+      transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+      background-color 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
     padding: 0;
   }
@@ -511,7 +567,7 @@ const slides = [
   }
 
   .carousel-dot.is-active {
-    width: 32px;
+    transform: scaleX(1);
     opacity: 1;
     background: var(--color-border);
   }
@@ -551,7 +607,7 @@ const slides = [
       font-size: 0.875rem;
     }
 
-    .carousel-dot.is-active {
+    .carousel-dot {
       width: 24px;
     }
   }

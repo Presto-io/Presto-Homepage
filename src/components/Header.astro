@@ -1,5 +1,14 @@
 ---
+import { releaseBase, version } from '../data/release';
 const githubSvgPath = 'M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z';
+const primaryDownloads = {
+  macosArm: `${releaseBase}/Presto-${version}-macOS-arm64.dmg`,
+  macosIntel: `${releaseBase}/Presto-${version}-macOS-amd64.dmg`,
+  windowsX64: `${releaseBase}/Presto-${version}-windows-amd64-installer.exe`,
+  windowsArm: `${releaseBase}/Presto-${version}-windows-arm64-installer.exe`,
+  linuxX64: `${releaseBase}/Presto-${version}-linux-amd64.tar.gz`,
+  linuxArm: `${releaseBase}/Presto-${version}-linux-arm64.tar.gz`,
+};
 
 const navItems = [
   { href: '/#features', zh: '功能', en: 'Features', icon: 'M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z' },
@@ -9,7 +18,7 @@ const navItems = [
   { href: 'https://presto-doc.pages.dev', zh: '文档', en: 'Docs', icon: 'M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25' },
   { zh: '插件', en: 'Plugins', comingSoon: true, icon: 'M14.25 6.087c0-.355.186-.676.401-.959.221-.29.349-.634.349-1.003 0-1.036-1.007-1.875-2.25-1.875s-2.25.84-2.25 1.875c0 .369.128.713.349 1.003.215.283.401.604.401.959v0a.64.64 0 01-.657.643 48.39 48.39 0 01-4.163-.3c.186 1.613.293 3.25.315 4.907a.656.656 0 01-.658.663v0c-.355 0-.676-.186-.959-.401a1.647 1.647 0 00-1.003-.349c-1.036 0-1.875 1.007-1.875 2.25s.84 2.25 1.875 2.25c.369 0 .713-.128 1.003-.349.283-.215.604-.401.959-.401v0c.31 0 .555.26.532.57a48.039 48.039 0 01-.642 5.056c1.518.19 3.058.309 4.616.354a.64.64 0 00.657-.643v0c0-.355-.186-.676-.401-.959a1.647 1.647 0 01-.349-1.003c0-1.035 1.008-1.875 2.25-1.875 1.243 0 2.25.84 2.25 1.875 0 .369-.128.713-.349 1.003-.215.283-.401.604-.401.959v0c0 .333.277.599.61.58a48.1 48.1 0 005.427-.63 48.05 48.05 0 00.582-4.717.532.532 0 00-.533-.57v0c-.355 0-.676.186-.959.401-.29.221-.634.349-1.003.349-1.035 0-1.875-1.007-1.875-2.25s.84-2.25 1.875-2.25c.37 0 .713.128 1.003.349.283.215.604.401.959.401v0a.656.656 0 00.658-.663 48.422 48.422 0 00-.37-5.36c-1.886.342-3.81.574-5.766.689a.578.578 0 01-.61-.58v0z' },
   { href: '/skills', zh: 'Agent 技能', en: 'Agent Skills', icon: 'M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 002.25-2.25V6.75a2.25 2.25 0 00-2.25-2.25H6.75A2.25 2.25 0 004.5 6.75v10.5a2.25 2.25 0 002.25 2.25zm.75-12h9v9h-9v-9z' },
-  { href: '/#download', zh: '下载', en: 'Download', isDownload: true, icon: 'M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3' },
+  { href: primaryDownloads.macosArm, zh: '下载', en: 'Download', isDownload: true, icon: 'M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3' },
 ];
 ---
 
@@ -38,7 +47,16 @@ const navItems = [
             <span class="coming-soon-tip"><span class="zh">即将推出</span><span class="en">Coming Soon</span></span>
           </span>
         ) : (
-          <a href={item.href} class="nav-link">
+          <a
+            href={item.href}
+            class={`nav-link${item.isDownload ? ' download-direct-link' : ''}`}
+            data-macos-arm={item.isDownload ? primaryDownloads.macosArm : undefined}
+            data-macos-intel={item.isDownload ? primaryDownloads.macosIntel : undefined}
+            data-windows-x64={item.isDownload ? primaryDownloads.windowsX64 : undefined}
+            data-windows-arm={item.isDownload ? primaryDownloads.windowsArm : undefined}
+            data-linux-x64={item.isDownload ? primaryDownloads.linuxX64 : undefined}
+            data-linux-arm={item.isDownload ? primaryDownloads.linuxArm : undefined}
+          >
             <svg class="nav-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">{item.icon.split('|').map(d => <path d={d}/>)}</svg>
             <span class="zh">{item.zh}</span><span class="en">{item.en}</span>
           </a>
@@ -98,7 +116,16 @@ const navItems = [
             <span class="mobile-coming-tag"><span class="zh">即将推出</span><span class="en">Coming Soon</span></span>
           </span>
         ) : (
-          <a href={item.href} class={`mobile-link${item.isDownload ? ' mobile-link--download' : ''}`}>
+          <a
+            href={item.href}
+            class={`mobile-link${item.isDownload ? ' mobile-link--download download-direct-link' : ''}`}
+            data-macos-arm={item.isDownload ? primaryDownloads.macosArm : undefined}
+            data-macos-intel={item.isDownload ? primaryDownloads.macosIntel : undefined}
+            data-windows-x64={item.isDownload ? primaryDownloads.windowsX64 : undefined}
+            data-windows-arm={item.isDownload ? primaryDownloads.windowsArm : undefined}
+            data-linux-x64={item.isDownload ? primaryDownloads.linuxX64 : undefined}
+            data-linux-arm={item.isDownload ? primaryDownloads.linuxArm : undefined}
+          >
             <span class="mobile-link-text">
               <span class="zh">{item.zh}</span><span class="en">{item.en}</span>
             </span>
@@ -137,6 +164,22 @@ const navItems = [
     var indicator   = document.getElementById('nav-indicator');
     var navEl       = document.getElementById('desktop-nav');
     var githubLink  = document.getElementById('github-link');
+
+    function inferDownloadKey() {
+      var ua = navigator.userAgent.toLowerCase();
+      var platform = navigator.platform ? navigator.platform.toLowerCase() : '';
+      var isArm = /arm|aarch64/.test(ua + ' ' + platform);
+      if (ua.indexOf('win') !== -1 || platform.indexOf('win') !== -1) return isArm ? 'windowsArm' : 'windowsX64';
+      if (ua.indexOf('linux') !== -1 || platform.indexOf('linux') !== -1) return isArm ? 'linuxArm' : 'linuxX64';
+      return 'macosArm';
+    }
+
+    var downloadKey = inferDownloadKey();
+    var downloadLinks = document.querySelectorAll('.download-direct-link');
+    for (var dl = 0; dl < downloadLinks.length; dl++) {
+      var target = downloadLinks[dl].dataset[downloadKey] || downloadLinks[dl].dataset.macosArm;
+      if (target) downloadLinks[dl].href = target;
+    }
 
     /* ------------------------------------------------
        State machine: expanded ↔ collapsed
@@ -391,17 +434,32 @@ const navItems = [
     padding: 0.375rem 1.25rem 0.375rem 1rem;
     border-radius: var(--radius);
     background: var(--nav-bg);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(28px) saturate(190%);
+    -webkit-backdrop-filter: blur(28px) saturate(190%);
     border: 1px solid var(--nav-border);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.03);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--glass-shadow-soft), inset 0 1px 0 var(--glass-highlight);
+    transition:
+      padding 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     pointer-events: auto;
+  }
+
+  .header-capsule::before {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    border-radius: calc(var(--radius) - 1px);
+    pointer-events: none;
+    background:
+      linear-gradient(135deg, rgba(255,255,255,0.46), transparent 36%),
+      linear-gradient(315deg, rgba(20, 184, 166, 0.12), transparent 40%);
   }
 
   .header.is-collapsed .header-capsule {
     padding: 0.25rem 0.5rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.04);
+    box-shadow: var(--glass-shadow-soft), inset 0 1px 0 var(--glass-highlight);
   }
 
   /* ============================================
@@ -414,7 +472,7 @@ const navItems = [
     gap: 0.5rem;
     font-weight: 700;
     font-size: 1rem;
-    letter-spacing: -0.025em;
+    letter-spacing: 0;
     color: var(--color-text);
     flex-shrink: 0;
     position: relative;
@@ -543,17 +601,19 @@ const navItems = [
       opacity 0.18s ease;
     background: linear-gradient(
       135deg,
-      rgba(59, 130, 246, 0.08) 0%,
-      rgba(139, 92, 246, 0.06) 100%
+      rgba(255, 255, 255, 0.52) 0%,
+      rgba(20, 184, 166, 0.12) 100%
     );
+    border: 1px solid var(--glass-border);
+    box-shadow: inset 0 1px 0 var(--glass-highlight);
   }
 
   @media (prefers-color-scheme: dark) {
     .nav-indicator {
       background: linear-gradient(
         135deg,
-        rgba(59, 130, 246, 0.14) 0%,
-        rgba(167, 139, 250, 0.10) 100%
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(45, 212, 191, 0.12) 100%
       );
     }
   }
@@ -831,7 +891,7 @@ const navItems = [
     padding: 1.0625rem 1.25rem;
     font-size: 1.25rem;
     font-weight: 600;
-    letter-spacing: -0.02em;
+    letter-spacing: 0;
     color: var(--color-text);
     border-radius: var(--radius-sm);
     text-align: left;
