@@ -2,31 +2,61 @@
 const features = [
   {
     icon: 'preview',
+    size: 'wide',
+    stat: '01',
+    accent: '#60a5fa',
+    zhMeta: '写作台',
+    enMeta: 'Workspace',
     zh: { title: '实时预览', desc: 'CodeMirror 6 编辑器实时编辑，右侧即时渲染 SVG 预览排版效果。所见即所得。' },
     en: { title: 'Live Preview', desc: 'Edit with CodeMirror 6 and see your document rendered as SVG in real time. What you see is what you get.' },
   },
   {
     icon: 'pdf',
+    size: 'tall',
+    stat: '02',
+    accent: '#facc15',
+    zhMeta: '交付',
+    enMeta: 'Export',
     zh: { title: '一键导出 PDF', desc: '点击按钮或 ⌘E 快捷键，立即导出专业排版的 PDF 文档。' },
     en: { title: 'One-Click PDF', desc: 'Click the export button or press ⌘E to instantly export a professionally typeset PDF.' },
   },
   {
     icon: 'template',
+    size: 'normal',
+    stat: '03',
+    accent: '#5eead4',
+    zhMeta: '模板',
+    enMeta: 'Templates',
     zh: { title: '模板系统', desc: '内置公文、教案等专业模板，支持社区第三方模板浏览和安装。' },
     en: { title: 'Template System', desc: 'Built-in professional templates for official documents and lesson plans. Community templates supported.' },
   },
   {
     icon: 'batch',
+    size: 'normal',
+    stat: '04',
+    accent: '#a7f3d0',
+    zhMeta: '批处理',
+    enMeta: 'Batch',
     zh: { title: '批量转换', desc: '一次导入并转换多个 Markdown 文件，支持拖拽和 ZIP 压缩包。' },
     en: { title: 'Batch Convert', desc: 'Import and convert multiple Markdown files at once. Drag & drop and ZIP archives supported.' },
   },
   {
     icon: 'drag',
+    size: 'wide',
+    stat: '05',
+    accent: '#93c5fd',
+    zhMeta: '低摩擦',
+    enMeta: 'Input',
     zh: { title: '拖放导入', desc: '拖拽 .md、.txt 文件或 .zip 包到窗口即可打开或批量导入。' },
     en: { title: 'Drag & Drop', desc: 'Drop .md, .txt files or .zip packages onto the window to open or batch import instantly.' },
   },
   {
     icon: 'yaml',
+    size: 'normal',
+    stat: '06',
+    accent: '#c4b5fd',
+    zhMeta: '元数据',
+    enMeta: 'Metadata',
     zh: { title: 'YAML 元数据', desc: '通过 YAML front matter 配置标题、作者、日期等文档元数据。' },
     en: { title: 'YAML Metadata', desc: 'Configure title, author, date and other document metadata via YAML front matter.' },
   },
@@ -45,38 +75,59 @@ const iconPaths = {
 <section class="features section" id="features">
   <div class="container">
     <div class="features-header animate-on-scroll">
-      <div class="section-label">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        <span class="zh">核心功能</span>
-        <span class="en">Core Features</span>
+      <div>
+        <div class="section-label">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          <span class="zh">核心功能</span>
+          <span class="en">Core Features</span>
+        </div>
+        <h2 class="section-title">
+          <span class="zh">把文档生产线压进<span class="gradient-text">一块工作台</span></span>
+          <span class="en">The Document Line, <span class="gradient-text">Compressed into One Desk</span></span>
+        </h2>
+        <p class="section-desc">
+          <span class="zh">编辑、模板、预览、批处理和导出被拆成清晰的操作面，每个动作都尽量靠近手边。</span>
+          <span class="en">Editing, templates, preview, batch work, and export are arranged as close-at-hand operating surfaces.</span>
+        </p>
       </div>
-      <h2 class="section-title">
-        <span class="zh">一切围绕<span class="gradient-text">效率</span>设计</span>
-        <span class="en">Designed for <span class="gradient-text">Efficiency</span></span>
-      </h2>
-      <p class="section-desc">
-        <span class="zh">从编辑到导出，每一步都经过精心打磨。无需复杂配置，开箱即用。</span>
-        <span class="en">From editing to export, every step is carefully crafted. No complex setup needed — works out of the box.</span>
-      </p>
+      <div class="features-meter" aria-hidden="true">
+        <span>MD</span>
+        <i></i>
+        <span>Typst</span>
+        <i></i>
+        <span>PDF</span>
+      </div>
     </div>
 
-    <div class="features-grid">
+    <div class="features-board">
       {features.map((f, i) => (
-        <div class="feature-card animate-on-scroll" style={`transition-delay: ${i * 0.08}s`}>
+        <article class={`feature-card feature-card--${f.size} animate-on-scroll`} style={`--feature-accent: ${f.accent}; transition-delay: ${i * 0.06}s`}>
+          <div class="feature-card-top">
+            <span class="feature-stat">{f.stat}</span>
+            <span class="feature-meta">
+              <span class="zh">{f.zhMeta}</span>
+              <span class="en">{f.enMeta}</span>
+            </span>
+          </div>
           <div class="feature-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round">
               <path d={iconPaths[f.icon]} />
             </svg>
           </div>
-          <h3 class="feature-title">
-            <span class="zh">{f.zh.title}</span>
-            <span class="en">{f.en.title}</span>
-          </h3>
-          <p class="feature-desc">
-            <span class="zh">{f.zh.desc}</span>
-            <span class="en">{f.en.desc}</span>
-          </p>
-        </div>
+          <div class="feature-copy">
+            <h3 class="feature-title">
+              <span class="zh">{f.zh.title}</span>
+              <span class="en">{f.en.title}</span>
+            </h3>
+            <p class="feature-desc">
+              <span class="zh">{f.zh.desc}</span>
+              <span class="en">{f.en.desc}</span>
+            </p>
+          </div>
+          <div class="feature-motion" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+        </article>
       ))}
     </div>
   </div>
@@ -84,35 +135,111 @@ const iconPaths = {
 
 <style>
   .features-header {
-    text-align: center;
-    margin-bottom: 3.5rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: clamp(1.5rem, 5vw, 4rem);
+    align-items: end;
+    margin-bottom: 3.25rem;
   }
 
   .features {
+    position: relative;
     background:
+      radial-gradient(circle at 15% 20%, rgba(96, 165, 250, 0.12), transparent 24rem),
+      radial-gradient(circle at 82% 34%, rgba(45, 212, 191, 0.1), transparent 22rem),
       linear-gradient(180deg, transparent 0%, var(--glass-wash) 50%, transparent 100%);
   }
 
-  .features-grid {
+  .features-header .section-title {
+    max-width: 820px;
+    margin-bottom: 0.9rem;
+  }
+
+  .features-header .section-desc {
+    max-width: 700px;
+    margin: 0;
+  }
+
+  .features-meter {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.65rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid var(--glass-border);
+    background:
+      var(--material-sheen),
+      var(--glass-bg);
+    color: var(--color-text-secondary);
+    box-shadow: var(--glass-shadow-soft), inset 0 1px 0 var(--glass-highlight);
+    backdrop-filter: blur(22px) saturate(170%);
+    -webkit-backdrop-filter: blur(22px) saturate(170%);
+    font-size: 0.78rem;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  .features-meter i {
+    width: 2.35rem;
+    height: 2px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--color-accent), var(--color-accent-secondary));
+    opacity: 0.64;
+  }
+
+  .features-board {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-auto-rows: 320px;
+    gap: clamp(0.9rem, 2vw, 1.35rem);
+    align-items: stretch;
   }
 
   .feature-card {
-    padding: 1.75rem;
-    border-radius: var(--radius);
+    --lift: 0px;
+    grid-column: span 3;
+    min-height: 0;
+    padding: clamp(1.1rem, 2vw, 1.55rem);
+    border-radius: 26px;
     border: 1px solid var(--glass-border);
-    background: var(--glass-bg);
-    transition:
-      border-color 240ms ease,
-      box-shadow 280ms cubic-bezier(0.22, 1, 0.36, 1),
-      transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+    background:
+      linear-gradient(135deg, color-mix(in srgb, var(--feature-accent) 18%, transparent), transparent 44%),
+      var(--material-sheen),
+      var(--glass-bg);
     position: relative;
     overflow: hidden;
-    box-shadow: var(--glass-shadow-soft);
+    box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-highlight), inset 0 -24px 58px rgba(255, 255, 255, 0.035);
     backdrop-filter: blur(24px) saturate(175%);
     -webkit-backdrop-filter: blur(24px) saturate(175%);
+    transform: translateY(var(--lift));
+    transition:
+      border-color 220ms ease,
+      box-shadow 280ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .feature-card--wide {
+    grid-column: span 6;
+  }
+
+  .feature-card--tall {
+    grid-column: span 3;
+    grid-row: span 2;
+  }
+
+  .feature-card:nth-child(1) { --tilt: -0.9deg; grid-column: 1 / 7; grid-row: 1 / 2; }
+  .feature-card:nth-child(2) { --tilt: 1.1deg; grid-column: 7 / 10; grid-row: 1 / 3; }
+  .feature-card:nth-child(3) { --tilt: 0.5deg; grid-column: 10 / 13; grid-row: 1 / 2; }
+  .feature-card:nth-child(4) { --tilt: -0.6deg; grid-column: 1 / 4; grid-row: 2 / 3; }
+  .feature-card:nth-child(5) { --tilt: 0.7deg; grid-column: 4 / 7; grid-row: 2 / 3; }
+  .feature-card:nth-child(6) { --tilt: -0.8deg; grid-column: 10 / 13; grid-row: 2 / 3; }
+
+  .feature-card-top,
+  .feature-copy,
+  .feature-icon,
+  .feature-motion {
+    position: relative;
+    z-index: 1;
   }
 
   .feature-card::before {
@@ -120,77 +247,186 @@ const iconPaths = {
     position: absolute;
     inset: 0;
     background:
-      linear-gradient(135deg, rgba(255,255,255,0.56), transparent 34%),
-      linear-gradient(315deg, rgba(20, 184, 166, 0.1), transparent 36%);
-    opacity: 0.82;
+      radial-gradient(circle at 18% 12%, color-mix(in srgb, var(--feature-accent) 28%, transparent), transparent 36%),
+      var(--interference-sheen);
+    opacity: 0.6;
     pointer-events: none;
+    transition: opacity 220ms ease;
   }
 
   .feature-card::after {
     content: '';
     position: absolute;
-    left: 1.75rem;
-    right: 1.75rem;
-    top: 0;
-    height: 1px;
-    background: var(--glass-highlight);
-    opacity: 0.9;
+    inset: 1px;
+    border-radius: 25px;
+    box-shadow: inset 0 1px 0 var(--glass-highlight);
     pointer-events: none;
   }
 
-  .feature-card:hover {
-    box-shadow: var(--glass-shadow-strong);
-    border-color: var(--glass-border-strong);
-    transform: translateY(-4px);
+  .feature-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    color: var(--color-text-muted);
+    font-size: 0.74rem;
+    font-weight: 800;
+  }
+
+  .feature-stat {
+    color: var(--feature-accent);
+    font-family: var(--font-mono);
+  }
+
+  .feature-meta {
+    padding: 0.18rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid var(--glass-border);
+    background: var(--glass-chip-bg);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .feature-card:hover {
+      z-index: 3;
+      border-color: var(--glass-border-strong);
+      box-shadow: var(--glass-shadow-strong), inset 0 3px 18px rgba(255,255,255,0.22), inset 0 -30px 70px color-mix(in srgb, var(--feature-accent) 10%, transparent);
+      rotate: calc(var(--tilt, 0deg) * -0.35);
+      transform: translateY(-16px) scale(1.035);
+    }
+
+    .feature-card:hover::before {
+      opacity: 0.9;
+    }
+
+    .feature-card:hover .feature-icon {
+      transform: translateY(-8px) rotate(-6deg) scale(1.12);
+    }
+
+    .feature-card:hover .feature-motion span:nth-child(1) {
+      transform: translateX(24px);
+    }
+
+    .feature-card:hover .feature-motion span:nth-child(2) {
+      transform: translateX(-16px);
+    }
+
+    .feature-card:hover .feature-motion span:nth-child(3) {
+      transform: translateX(12px);
+    }
   }
 
   .feature-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.9), rgba(20, 184, 166, 0.9));
-    color: #ffffff;
-    margin-bottom: 1rem;
-    position: relative;
-    z-index: 1;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.34), 0 12px 24px rgba(20, 184, 166, 0.18);
-    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.35s ease;
-  }
-
-  .feature-card:hover .feature-icon {
-    transform: scale(1.1) rotate(-3deg);
-    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+    width: 54px;
+    height: 54px;
+    border-radius: 17px;
+    background: color-mix(in srgb, var(--feature-accent) 24%, var(--glass-bg-strong));
+    color: var(--feature-accent);
+    margin-bottom: 1.15rem;
+    box-shadow: inset 0 1px 0 var(--glass-highlight), 0 14px 30px color-mix(in srgb, var(--feature-accent) 18%, transparent);
+    transition:
+      box-shadow 260ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .feature-title {
-    font-size: 1.0625rem;
-    font-weight: 650;
-    margin-bottom: 0.5rem;
+    font-size: clamp(1.16rem, 2vw, 1.48rem);
+    font-weight: 780;
+    margin-bottom: 0.55rem;
     letter-spacing: 0;
-    position: relative;
-    z-index: 1;
+    line-height: 1.16;
   }
 
   .feature-desc {
-    font-size: 0.9rem;
+    max-width: 30em;
+    font-size: 0.92rem;
     color: var(--color-text-secondary);
     line-height: 1.6;
-    position: relative;
-    z-index: 1;
+  }
+
+  .feature-motion {
+    display: grid;
+    gap: 0.42rem;
+    margin-top: 1.25rem;
+    max-width: 12rem;
+  }
+
+  .feature-motion span {
+    display: block;
+    width: var(--w, 100%);
+    height: 0.42rem;
+    border-radius: 999px;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--feature-accent) 42%, transparent), transparent);
+    transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .feature-motion span:nth-child(1) { --w: 86%; }
+  .feature-motion span:nth-child(2) { --w: 62%; }
+  .feature-motion span:nth-child(3) { --w: 74%; }
+
+  .feature-card--tall {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .feature-card:not(.feature-card--wide):not(.feature-card--tall) .feature-motion {
+    display: none;
+  }
+
+  .feature-card:nth-child(5) .feature-motion {
+    display: none;
+  }
+
+  .feature-card--tall .feature-motion {
+    margin-top: auto;
+    padding-top: 1.5rem;
   }
 
   @media (max-width: 900px) {
-    .features-grid {
-      grid-template-columns: repeat(2, 1fr);
+    .features-header {
+      grid-template-columns: 1fr;
+      align-items: start;
+    }
+
+    .features-meter {
+      width: fit-content;
+    }
+
+    .features-board {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-auto-rows: auto;
+    }
+
+    .features-board .feature-card,
+    .features-board .feature-card--wide,
+    .features-board .feature-card--tall {
+      grid-column: auto;
+      grid-row: auto;
+      min-height: 220px;
     }
   }
 
   @media (max-width: 560px) {
-    .features-grid {
+    .features-board {
       grid-template-columns: 1fr;
+    }
+
+    .feature-card {
+      transform: none;
+      rotate: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .feature-card,
+    .feature-card:hover,
+    .feature-card:hover .feature-icon,
+    .feature-card:hover .feature-motion span {
+      transform: none !important;
+      rotate: none !important;
     }
   }
 </style>
