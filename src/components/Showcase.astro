@@ -93,7 +93,7 @@ const slides = [
                   <span class="en">{s.en_desc}</span>
                 </p>
               </div>
-              <div class="slide-image">
+              <div class="slide-image adaptive-frame" data-frame-min-width="560">
                 <iframe
                   src={s.iframeSrc}
                   loading="lazy"
@@ -297,29 +297,69 @@ const slides = [
     carouselEl.addEventListener('mouseleave', function () { if (!paused) startAuto(); });
   }
 
-  /* Recalc on resize */
-  /* Scale showcase iframes to fit container */
-  function scaleIframes() {
-    var containers = document.querySelectorAll('.slide-image');
-    for (var i = 0; i < containers.length; i++) {
-      var iframe = containers[i].querySelector('.showcase-iframe');
-      if (!iframe) continue;
-      var cw = containers[i].offsetWidth;
-      var scale = cw / 1200;
-      iframe.style.transform = 'scale(' + scale + ')';
-      containers[i].style.height = Math.round(800 * scale) + 'px';
+  function fitAdaptiveFrame(frame) {
+    var iframe = frame.querySelector('iframe');
+    if (!iframe) return;
+    var boxWidth = frame.clientWidth;
+    var boxHeight = frame.clientHeight;
+    if (!boxWidth || !boxHeight) return;
+
+    var minWidth = parseFloat(frame.dataset.frameMinWidth || '560');
+    var targetWidth = Math.max(boxWidth, minWidth);
+
+    try {
+      var doc = iframe.contentDocument;
+      var contentWidth = doc ? Math.max(doc.documentElement.scrollWidth, doc.body ? doc.body.scrollWidth : 0) : 0;
+      if (contentWidth > targetWidth && boxWidth < contentWidth) {
+        targetWidth = contentWidth;
+      }
+    } catch (error) {
+      // Showcase frames are same-origin; retain the declared minimum if inspection is unavailable.
+    }
+
+    var scale = Math.min(1, boxWidth / targetWidth);
+    iframe.style.width = Math.ceil(targetWidth) + 'px';
+    iframe.style.height = Math.ceil(boxHeight / scale) + 'px';
+    iframe.style.transform = scale < 0.999 ? 'scale(' + scale.toFixed(4) + ')' : 'none';
+  }
+
+  function fitAdaptiveFrames() {
+    var frames = document.querySelectorAll('.slide-image.adaptive-frame');
+    for (var i = 0; i < frames.length; i++) {
+      fitAdaptiveFrame(frames[i]);
     }
   }
 
+  var adaptiveFrames = document.querySelectorAll('.slide-image.adaptive-frame');
+  for (var f = 0; f < adaptiveFrames.length; f++) {
+    (function (frame) {
+      var frameIframe = frame.querySelector('iframe');
+      if (frameIframe) {
+        frameIframe.addEventListener('load', function () {
+          fitAdaptiveFrame(frame);
+          window.setTimeout(function () { fitAdaptiveFrame(frame); }, 250);
+        });
+      }
+    })(adaptiveFrames[f]);
+  }
+
+  if ('ResizeObserver' in window) {
+    var frameObserver = new ResizeObserver(fitAdaptiveFrames);
+    for (var ro = 0; ro < adaptiveFrames.length; ro++) {
+      frameObserver.observe(adaptiveFrames[ro]);
+    }
+  }
+
+  /* Recalc on resize */
   var resizeTimer;
   window.addEventListener('resize', function () {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(function () { goTo(current, false); scaleIframes(); }, 100);
+    resizeTimer = setTimeout(function () { goTo(current, false); fitAdaptiveFrames(); }, 100);
   });
 
   /* Init */
   goTo(0, false);
-  scaleIframes();
+  fitAdaptiveFrames();
   startAuto();
 })();
 </script>
@@ -474,14 +514,15 @@ const slides = [
     position: relative;
     border-radius: 18px;
     z-index: 1;
+    height: clamp(420px, 52vw, 620px);
     border: 1px solid rgba(255, 255, 255, 0.5);
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.72), 0 18px 42px rgba(15, 23, 42, 0.12);
     background: rgba(255, 255, 255, 0.24);
   }
 
   .showcase-iframe {
-    width: 1200px;
-    height: 800px;
+    width: 100%;
+    height: 100%;
     border: none;
     display: block;
     transform-origin: 0 0;
@@ -599,6 +640,10 @@ const slides = [
       padding: 1.5rem;
     }
 
+    .slide-image {
+      height: 520px;
+    }
+
     .slide-title {
       font-size: 1.25rem;
     }
@@ -619,6 +664,10 @@ const slides = [
 
     .slide-card {
       padding: 1.25rem;
+    }
+
+    .slide-image {
+      height: 560px;
     }
   }
 

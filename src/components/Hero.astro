@@ -111,7 +111,7 @@ const alternateDownloads = [
 
   <!-- Hero showcase -->
   <div class="container">
-    <div class="hero-image hero-anim" style="animation-delay: 0.4s">
+    <div class="hero-image hero-anim adaptive-frame" data-frame-min-width="560" style="animation-delay: 0.4s">
       <iframe
         src="/showcase/hero"
         class="hero-iframe"
@@ -189,14 +189,166 @@ const alternateDownloads = [
   var iframe = container ? container.querySelector('.hero-iframe') : null;
   if (!container || !iframe) return;
 
-  function scaleHero() {
-    var scale = container.offsetWidth / 1200;
-    iframe.style.transform = 'scale(' + scale + ')';
-    container.style.height = Math.round(800 * scale) + 'px';
+  function fitAdaptiveFrame(frame) {
+    var frameIframe = frame.querySelector('iframe');
+    if (!frameIframe) return;
+    var boxWidth = frame.clientWidth;
+    var boxHeight = frame.clientHeight;
+    if (!boxWidth || !boxHeight) return;
+
+    var minWidth = parseFloat(frame.dataset.frameMinWidth || '560');
+    var targetWidth = Math.max(boxWidth, minWidth);
+
+    try {
+      var doc = frameIframe.contentDocument;
+      var contentWidth = doc ? Math.max(doc.documentElement.scrollWidth, doc.body ? doc.body.scrollWidth : 0) : 0;
+      if (contentWidth > targetWidth && boxWidth < contentWidth) {
+        targetWidth = contentWidth;
+      }
+    } catch (error) {
+      // Same-origin showcase frames are expected; keep the declared minimum as fallback.
+    }
+
+    var scale = Math.min(1, boxWidth / targetWidth);
+    frameIframe.style.width = Math.ceil(targetWidth) + 'px';
+    frameIframe.style.height = Math.ceil(boxHeight / scale) + 'px';
+    frameIframe.style.transform = scale < 0.999 ? 'scale(' + scale.toFixed(4) + ')' : 'none';
   }
 
-  scaleHero();
-  window.addEventListener('resize', scaleHero);
+  fitAdaptiveFrame(container);
+  iframe.addEventListener('load', function () {
+    fitAdaptiveFrame(container);
+    window.setTimeout(function () { fitAdaptiveFrame(container); }, 250);
+  });
+  if ('ResizeObserver' in window) {
+    var heroFrameObserver = new ResizeObserver(function () {
+      fitAdaptiveFrame(container);
+    });
+    heroFrameObserver.observe(container);
+  } else {
+    window.addEventListener('resize', function () { fitAdaptiveFrame(container); });
+  }
+
+  var heroSide = document.querySelector('.hero-side');
+  if (heroSide) {
+    var heroTitle = document.querySelector('.hero-title');
+
+    function getTitleRows() {
+      if (!heroTitle) return [];
+
+      var titleParts = heroTitle.querySelectorAll('.title-stack > .title-line, .title-stack > .title-pair, .title-stack > .title-subline');
+      var rows = [];
+
+      for (var i = 0; i < titleParts.length; i++) {
+        var rect = titleParts[i].getBoundingClientRect();
+        if (!rect.width || !rect.height) continue;
+        rows.push({
+          left: rect.left,
+          right: rect.right,
+          top: rect.top,
+          bottom: rect.bottom,
+          width: rect.width,
+          height: rect.height
+        });
+      }
+
+      rows.sort(function (a, b) {
+        return a.top - b.top;
+      });
+
+      return rows;
+    }
+
+    function getTitleVisualRect(rows) {
+      if (!heroTitle) return null;
+
+      var titleRows = rows || getTitleRows();
+      var left = Infinity;
+      var right = -Infinity;
+      var top = Infinity;
+      var bottom = -Infinity;
+
+      for (var i = 0; i < titleRows.length; i++) {
+        var rect = titleRows[i];
+        left = Math.min(left, rect.left);
+        right = Math.max(right, rect.right);
+        top = Math.min(top, rect.top);
+        bottom = Math.max(bottom, rect.bottom);
+      }
+
+      if (!isFinite(left)) return heroTitle.getBoundingClientRect();
+
+      return {
+        left: left,
+        right: right,
+        top: top,
+        bottom: bottom,
+        width: right - left,
+        height: bottom - top
+      };
+    }
+
+    function tuneHeroSideOffset() {
+      if (!heroTitle || window.matchMedia('(max-width: 768px)').matches) {
+        if (heroTitle) heroTitle.style.removeProperty('--hero-title-box-width');
+        heroSide.style.setProperty('--hero-side-y', '0px');
+        return;
+      }
+
+      heroSide.style.setProperty('--hero-side-y', '0px');
+      var titleRows = getTitleRows();
+      var titleRect = getTitleVisualRect(titleRows);
+      var titleMaxWidth = Math.max(0, document.documentElement.clientWidth - titleRect.left - 24);
+      heroTitle.style.setProperty('--hero-title-box-width', Math.ceil(Math.min(titleRect.width, titleMaxWidth)) + 'px');
+      titleRows = getTitleRows();
+      titleRect = getTitleVisualRect(titleRows);
+      var sideRect = heroSide.getBoundingClientRect();
+      var rowGap = Math.min(34, Math.max(22, window.innerWidth * 0.018));
+      var sideHeight = sideRect.height;
+      var targetTop = titleRows.length ? titleRows[0].top : titleRect.top;
+
+      for (var i = 0; i < titleRows.length; i++) {
+        var row = titleRows[i];
+        var horizontalOverlap = Math.min(row.right, sideRect.right) - Math.max(row.left, sideRect.left);
+        if (horizontalOverlap <= 0) continue;
+
+        var targetBottom = targetTop + sideHeight;
+        var verticalOverlap = Math.min(row.bottom, targetBottom) - Math.max(row.top, targetTop);
+        if (verticalOverlap > 0) {
+          targetTop = row.bottom + rowGap;
+        }
+      }
+
+      heroSide.style.setProperty('--hero-side-y', Math.max(0, Math.round(targetTop - sideRect.top)) + 'px');
+    }
+
+    tuneHeroSideOffset();
+    window.setTimeout(tuneHeroSideOffset, 250);
+    window.setTimeout(tuneHeroSideOffset, 900);
+    window.setTimeout(tuneHeroSideOffset, 1200);
+    window.addEventListener('resize', tuneHeroSideOffset);
+    heroTitle.addEventListener('animationend', tuneHeroSideOffset);
+    heroSide.addEventListener('animationend', tuneHeroSideOffset);
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(tuneHeroSideOffset).catch(function () {});
+    }
+    if ('ResizeObserver' in window && heroTitle) {
+      var heroCopyObserver = new ResizeObserver(tuneHeroSideOffset);
+      heroCopyObserver.observe(heroTitle);
+    }
+
+    heroSide.addEventListener('pointermove', function (event) {
+      var rect = this.getBoundingClientRect();
+      var rx = ((event.clientY - rect.top) / rect.height - 0.5) * -8;
+      var ry = ((event.clientX - rect.left) / rect.width - 0.5) * 10;
+      this.style.setProperty('--hero-rx', rx.toFixed(2) + 'deg');
+      this.style.setProperty('--hero-ry', ry.toFixed(2) + 'deg');
+    });
+    heroSide.addEventListener('pointerleave', function () {
+      this.style.removeProperty('--hero-rx');
+      this.style.removeProperty('--hero-ry');
+    });
+  }
 
   var cards = document.querySelectorAll('.story-card');
   for (var i = 0; i < cards.length; i++) {
@@ -329,6 +481,7 @@ const alternateDownloads = [
     position: relative;
     z-index: 1;
     padding-top: 2.5rem;
+    max-width: 1360px;
   }
 
   .hero-badge {
@@ -345,7 +498,7 @@ const alternateDownloads = [
     font-size: 0.8125rem;
     font-weight: 500;
     color: var(--color-text-secondary);
-    margin-bottom: 1.5rem;
+    margin-bottom: clamp(2.15rem, 3vw, 3.1rem);
     margin-left: clamp(0rem, 4vw, 4rem);
     transition:
       border-color 200ms ease,
@@ -365,14 +518,22 @@ const alternateDownloads = [
 
   .hero-copy-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
-    gap: clamp(2rem, 6vw, 5rem);
-    align-items: end;
+    grid-template-columns: minmax(0, 1fr) minmax(360px, 480px);
+    gap: clamp(2rem, 4vw, 3.5rem);
+    align-items: start;
+    min-width: 0;
+  }
+
+  .hero-copy-grid > * {
+    min-width: 0;
   }
 
   .hero-title {
     margin: 0;
     color: var(--color-text);
+    width: var(--hero-title-box-width, max-content);
+    max-width: calc(100vw - 2rem);
+    justify-self: start;
   }
 
   .title-stack {
@@ -380,11 +541,14 @@ const alternateDownloads = [
     flex-direction: column;
     align-items: flex-start;
     gap: clamp(0.1rem, 1vw, 0.45rem);
+    width: max-content;
+    max-width: 100%;
   }
 
   .title-line {
     display: block;
-    font-size: clamp(4rem, 14vw, 10rem);
+    white-space: nowrap;
+    font-size: clamp(4rem, 10.6vw, 8.4rem);
     font-weight: 880;
     line-height: 0.82;
     letter-spacing: 0;
@@ -400,8 +564,8 @@ const alternateDownloads = [
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: clamp(3.2rem, 8vw, 6.25rem);
-    height: clamp(3.2rem, 8vw, 6.25rem);
+    min-width: clamp(3.2rem, 6.8vw, 5.4rem);
+    height: clamp(3.2rem, 6.8vw, 5.4rem);
     padding: 0 clamp(0.75rem, 2vw, 1.2rem);
     border-radius: 24px;
     background: var(--glass-bg);
@@ -410,7 +574,7 @@ const alternateDownloads = [
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     color: var(--color-accent);
-    font-size: clamp(1.9rem, 5vw, 4.7rem);
+    font-size: clamp(1.9rem, 4.4vw, 4rem);
     font-weight: 820;
     line-height: 1;
     transform: rotate(-6deg);
@@ -418,23 +582,70 @@ const alternateDownloads = [
 
   .title-subline {
     display: block;
-    font-size: clamp(2.2rem, 8vw, 6.2rem);
+    white-space: nowrap;
+    font-size: clamp(2.2rem, 7.3vw, 5.6rem);
     font-weight: 840;
     line-height: 0.95;
   }
 
   .hero-side {
+    --hero-rx: 0deg;
+    --hero-ry: 0deg;
+    --hero-side-y: 0px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    position: relative;
     padding: 1.4rem;
+    margin-block-start: var(--hero-side-y);
     margin-bottom: 0.6rem;
     border-radius: 24px;
     border: 1px solid var(--glass-border);
-    background: var(--glass-bg);
-    box-shadow: var(--glass-shadow-soft), inset 0 1px 0 var(--glass-highlight);
+    background:
+      var(--material-sheen),
+      var(--interference-sheen),
+      var(--glass-bg);
+    box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-highlight), inset 0 -24px 58px rgba(20, 184, 166, 0.06);
     backdrop-filter: blur(24px) saturate(175%);
     -webkit-backdrop-filter: blur(24px) saturate(175%);
+    transform-style: preserve-3d;
+    transform-origin: 50% 70%;
+    animation-name: hero-card-arrive;
+    animation-duration: 760ms;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    transition:
+      border-color 220ms ease,
+      box-shadow 280ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .hero-side::before {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    border-radius: 23px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.2), transparent 44%);
+    pointer-events: none;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .hero-side:hover {
+      border-color: var(--glass-border-strong);
+      box-shadow: var(--glass-shadow-strong), inset 0 3px 16px rgba(255,255,255,0.3), inset 0 -28px 64px rgba(20, 184, 166, 0.1);
+      transform: perspective(900px) rotateX(var(--hero-rx)) rotateY(var(--hero-ry)) translateY(-12px) scale(1.025);
+    }
+
+    .hero-side:hover .btn-primary {
+      transform: translateY(-3px) scale(1.035);
+      box-shadow: 0 12px 34px rgba(59, 130, 246, 0.42);
+    }
+
+    .hero-side:hover .homebrew-card {
+      transform: translateY(4px) rotate(-0.8deg);
+    }
   }
 
   .hero-desc {
@@ -450,6 +661,8 @@ const alternateDownloads = [
     justify-content: flex-start;
     gap: 1rem;
     flex-wrap: wrap;
+    width: 100%;
+    min-width: 0;
     margin-bottom: 1rem;
   }
 
@@ -460,6 +673,8 @@ const alternateDownloads = [
 
   .homebrew-card {
     width: 100%;
+    min-width: 0;
+    max-width: 100%;
     margin: 0 0 0.75rem;
     padding: 0.75rem;
     border-radius: 16px;
@@ -469,6 +684,9 @@ const alternateDownloads = [
       rgba(255, 255, 255, 0.32);
     box-shadow: inset 0 1px 0 var(--glass-highlight), 0 12px 30px rgba(15, 23, 42, 0.07);
     display: none;
+    transition:
+      box-shadow 260ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .homebrew-card.is-visible {
@@ -484,6 +702,7 @@ const alternateDownloads = [
     color: var(--color-accent);
     font-size: 0.78rem;
     font-weight: 800;
+    min-width: 0;
   }
 
   .homebrew-card code {
@@ -497,6 +716,8 @@ const alternateDownloads = [
     font-size: 0.78rem;
     line-height: 1.5;
     overflow-wrap: anywhere;
+    word-break: break-word;
+    white-space: normal;
   }
 
   .homebrew-copy {
@@ -520,6 +741,8 @@ const alternateDownloads = [
 
   .alternate-downloads {
     width: 100%;
+    min-width: 0;
+    max-width: 100%;
     margin: -0.25rem 0 0.75rem;
     color: var(--color-text-muted);
     font-size: 0.72rem;
@@ -556,7 +779,7 @@ const alternateDownloads = [
   .hero-image {
     position: relative;
     z-index: 1;
-    max-width: 1000px;
+    max-width: 1120px;
     margin: 3.5rem auto 0;
     overflow: hidden;
     border-radius: 18px;
@@ -565,6 +788,7 @@ const alternateDownloads = [
     box-shadow: var(--glass-shadow-strong), inset 0 1px 0 var(--glass-highlight);
     backdrop-filter: blur(28px) saturate(180%);
     -webkit-backdrop-filter: blur(28px) saturate(180%);
+    height: clamp(420px, 52vw, 620px);
     transition: transform 0.4s ease, box-shadow 0.4s ease;
   }
 
@@ -580,11 +804,26 @@ const alternateDownloads = [
   }
 
   .hero-iframe {
-    width: 1200px;
-    height: 800px;
+    width: 100%;
+    height: 100%;
     border: none;
     display: block;
     transform-origin: 0 0;
+  }
+
+  @keyframes hero-card-arrive {
+    from {
+      opacity: 0;
+      transform: translate3d(9vw, -5vh, 0) rotate(5deg) scale(0.9);
+    }
+    68% {
+      opacity: 1;
+      transform: translate3d(-0.8rem, 0.4rem, 0) rotate(-1.2deg) scale(1.025);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0) rotate(0) scale(1);
+    }
   }
 
   .hero-story {
@@ -605,12 +844,12 @@ const alternateDownloads = [
     box-shadow: var(--glass-shadow-soft), inset 0 1px 0 var(--glass-highlight);
     backdrop-filter: blur(24px) saturate(175%);
     -webkit-backdrop-filter: blur(24px) saturate(175%);
-    padding: 1.5rem;
+    padding: clamp(1.75rem, 2.2vw, 2.25rem);
     overflow: visible;
     position: absolute;
     display: grid;
-    grid-template-columns: minmax(220px, 0.86fr) minmax(220px, 1fr);
-    gap: 1rem;
+    grid-template-columns: minmax(230px, 0.9fr) minmax(220px, 0.95fr);
+    gap: clamp(1.1rem, 2vw, 1.8rem);
     align-items: center;
     transform-style: preserve-3d;
     rotate: var(--card-rotate);
@@ -719,9 +958,9 @@ const alternateDownloads = [
     --inner-y: -14vh;
     --inner-rotate: 26deg;
     left: 2%;
-    top: 2%;
-    width: 57%;
-    min-height: 520px;
+    top: 3%;
+    width: 51%;
+    min-height: 500px;
     z-index: 2;
   }
 
@@ -733,10 +972,10 @@ const alternateDownloads = [
     --inner-x: -16vw;
     --inner-y: 16vh;
     --inner-rotate: -24deg;
-    right: -1%;
+    right: 1.5%;
     top: 6%;
-    width: 46%;
-    min-height: 265px;
+    width: 41.5%;
+    min-height: 255px;
     z-index: 3;
   }
 
@@ -748,10 +987,10 @@ const alternateDownloads = [
     --inner-x: -18vw;
     --inner-y: -18vh;
     --inner-rotate: -22deg;
-    right: 7%;
-    bottom: 4%;
-    width: 43%;
-    min-height: 290px;
+    right: 6%;
+    bottom: 5%;
+    width: 39.5%;
+    min-height: 282px;
     z-index: 1;
   }
 
@@ -760,6 +999,10 @@ const alternateDownloads = [
     position: relative;
     z-index: 1;
     transform: translateZ(12px);
+  }
+
+  .story-copy {
+    padding-inline-start: clamp(0.25rem, 0.8vw, 0.75rem);
   }
 
   .story-eyebrow {
@@ -805,18 +1048,18 @@ const alternateDownloads = [
 
   .story-card--editor .software-illustration {
     min-height: 410px;
-    margin-right: -3.6rem;
+    margin-right: -1.4rem;
     rotate: 2deg;
   }
 
   .story-card--preview .software-illustration {
-    margin-right: -2.4rem;
+    margin-right: -0.85rem;
     rotate: -4deg;
   }
 
   .story-card--store .software-illustration {
-    margin-right: -3rem;
-    margin-bottom: -1.5rem;
+    margin-right: -1rem;
+    margin-bottom: -1rem;
     rotate: 3deg;
   }
 
@@ -824,8 +1067,10 @@ const alternateDownloads = [
     display: flex;
     gap: 0.36rem;
     padding: 0.85rem;
+    border-radius: 21px 21px 0 0;
     border-bottom: 1px solid rgba(15, 23, 42, 0.08);
     background: rgba(255,255,255,0.42);
+    overflow: hidden;
   }
 
   .mini-window-bar span {
@@ -996,6 +1241,7 @@ const alternateDownloads = [
 
     .hero-content {
       padding-top: 1.5rem;
+      max-width: 1200px;
     }
 
     .hero-badge {
@@ -1005,6 +1251,51 @@ const alternateDownloads = [
     .hero-copy-grid {
       grid-template-columns: 1fr;
       gap: 1.3rem;
+    }
+
+    .hero-title,
+    .title-stack {
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .hero-side {
+      justify-self: stretch;
+      width: 100%;
+      max-width: 100%;
+      padding: 1.25rem;
+      border-radius: 22px;
+      overflow: hidden;
+      animation-name: fade-in-up;
+    }
+
+    .hero-image {
+      height: clamp(500px, 130vw, 640px);
+    }
+
+    .hero-ctas {
+      gap: 0.75rem;
+    }
+
+    .hero-ctas .btn {
+      flex: 1 1 0;
+      min-width: 0;
+      padding-left: 0.85rem;
+      padding-right: 0.85rem;
+    }
+
+    .homebrew-card {
+      padding: 0.7rem;
+    }
+
+    .homebrew-card-head {
+      gap: 0.5rem;
+      font-size: 0.74rem;
+    }
+
+    .homebrew-card code {
+      font-size: 0.72rem;
+      padding: 0.62rem 0.65rem;
     }
 
     .title-line {
@@ -1068,6 +1359,30 @@ const alternateDownloads = [
     .story-card--store .software-illustration {
       margin: 0 -0.6rem -0.4rem 0;
       rotate: 0deg;
+    }
+  }
+
+  @media (min-width: 1101px) and (max-width: 1500px) {
+    .hero-side {
+      --hero-side-y: clamp(3rem, 5vw, 4.75rem);
+    }
+  }
+
+  @media (min-width: 769px) and (max-width: 1100px) {
+    .hero-side {
+      --hero-side-y: clamp(8rem, 16vw, 11rem);
+    }
+  }
+
+  @media (max-width: 420px) {
+    .hero-ctas {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .hero-ctas .btn {
+      width: 100%;
+      flex-basis: auto;
     }
   }
 
