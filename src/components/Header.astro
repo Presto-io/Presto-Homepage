@@ -735,7 +735,12 @@ const navItems = [
   }
 
   .hamburger:hover {
-    background: var(--color-bg-elevated);
+    background: transparent;
+  }
+
+  .hamburger.is-active,
+  .hamburger.is-active:hover {
+    background: transparent;
   }
 
   .hamburger:active {
@@ -1124,11 +1129,11 @@ const navItems = [
     }
 
     .hamburger:hover {
-      background: var(--hover-bg-subtle);
+      background: transparent;
     }
 
     .hamburger:active {
-      background: rgba(255, 255, 255, 0.04);
+      background: transparent;
     }
 
     a.mobile-link:hover {
