@@ -44,7 +44,7 @@ my-template/
 
 ## 二进制协议
 
-模板编译后是一个独立可执行文件，必须且只能支持以下四种调用：
+模板编译后是一个独立可执行文件，必须且只能支持以下五种协议内调用：
 
 | 调用方式 | 行为 | 示例 |
 |---------|------|------|
@@ -52,6 +52,7 @@ my-template/
 | `./binary --manifest` | stdout 输出 manifest.json 内容 | `./binary --manifest > manifest.json` |
 | `./binary --example` | stdout 输出 example.md 内容 | `./binary --example > example.md` |
 | `./binary --version` | stdout 输出版本号（从 manifest.json 的 version 字段读取），然后退出 | `./binary --version` |
+| `./binary --info` | stdin 读 Markdown，stdout 输出后台信息 JSON | `cat doc.md \| ./binary --info` |
 
 **关键约束：**
 
@@ -61,7 +62,9 @@ my-template/
 - **禁止访问网络**——模板二进制在用户机器上执行，任何网络请求都是安全风险
 - **禁止写文件**——只允许通过 stdin/stdout 进行 I/O
 - **stdout 只能输出 Typst 源码**——不得输出 HTML、JSON（`--manifest`/`--version`/`--example` 模式除外）或任何非 Typst 内容
-- **不得添加协议外的 CLI flag**——二进制只能响应上述四种调用方式，禁止添加 `-h`、`-v`、`-o` 等额外参数
+- **默认转换 stdout 必须非空**——Typst 输出去空白后为空时必须视为转换失败
+- **转换失败必须写 stderr 并非 0 退出**——不得吞掉异常后返回空字符串、空白 Typst 或几乎无内容的成功结果
+- **不得添加协议外的 CLI flag**——二进制只能响应上述五种协议内调用，禁止添加 `-h`、`-v`、`-o` 等额外参数
 
 ---
 
@@ -129,8 +132,9 @@ axios, node-fetch, got, superagent, request, undici
 
 验证 `--example | ./binary` 的 stdout 输出：
 
-1. **不得包含 HTML 标签**：检测 `<html>`、`<script>`、`<iframe>`、`<img>`、`<link>`、`<!DOCTYPE>` 等
-2. **首行必须是 Typst 指令或注释**：以 `#` 开头（如 `#set`、`#let`、`#heading`）或 `//` 开头（Typst 行注释）
+1. **去空白后必须非空**：空字符串或仅空白字符必须失败
+2. **不得包含 HTML 标签**：检测 `<html>`、`<script>`、`<iframe>`、`<img>`、`<link>`、`<!DOCTYPE>` 等
+3. **首行必须是 Typst 指令或注释**：以 `#` 开头（如 `#set`、`#let`、`#heading`）或 `//` 开头（Typst 行注释）
 
 ### 执行方式
 
@@ -593,7 +597,8 @@ preview: build
 
 test: build test-security
     @./$(BINARY) --manifest | python3 -m json.tool > /dev/null
-    @./$(BINARY) --example | ./$(BINARY) > /dev/null
+    @OUTPUT=$$(./$(BINARY) --example | ./$(BINARY)); \
+    test -n "$$(printf '%s' "$$OUTPUT" | tr -d '[:space:]')"
     @./$(BINARY) --version > /dev/null
     @# category 字段校验（非空、≤20 字符、仅中英文/数字/空格/连字符）
     @./$(BINARY) --manifest | python3 -c "..."
@@ -611,6 +616,7 @@ test-security: build
     fi
     @# 第三层：输出格式验证（不含 HTML、首行为 Typst 指令或注释）
     @OUTPUT=$$(./$(BINARY) --example | ./$(BINARY)); \
+    test -n "$$(printf '%s' "$$OUTPUT" | tr -d '[:space:]')"; \
     echo "$$OUTPUT" | grep -qiE '<html|<script' && exit 1 || true; \
     echo "$$OUTPUT" | head -1 | grep -q '^[#/]'
 

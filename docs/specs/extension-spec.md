@@ -31,7 +31,7 @@
 | `./binary --manifest` | stdout 输出 manifest.json 内容 |
 | `./binary --example` | stdout 输出 example.md 内容 |
 | `./binary --version` | stdout 输出版本号（从 manifest.json 读取），然后退出 |
-| `./binary -o output.typ input.md` | 从文件读取，输出到文件（可选支持） |
+| `./binary --info` | stdin 读取 Markdown，stdout 输出后台信息 JSON |
 
 ### 2.2 安全约束
 
@@ -41,6 +41,9 @@
 - **禁止访问网络**——任何网络请求都是安全风险
 - **禁止写文件**——只允许通过 stdin/stdout 进行 I/O
 - **stdout 只能输出 Typst 源码**（`--manifest`/`--version`/`--example` 模式除外）
+- **默认转换 stdout 必须输出非空 Typst**——去空白后为空应视为转换失败
+- **转换失败必须写 stderr 并非 0 退出**——不得吞掉异常后返回空 Typst
+- **不得添加协议外的 CLI flag**——禁止 `-o`、`-h`、`-v` 等额外参数
 
 ### 2.4 三层安全防护
 
@@ -61,8 +64,9 @@
 
 **第三层：输出格式验证** — 检测输出内容
 
-1. 不得包含 HTML 标签（`<html>`, `<script>`, `<iframe>` 等）
-2. 首行必须是 Typst 指令（以 `#` 开头）
+1. stdout 去空白后必须非空
+2. 不得包含 HTML 标签（`<html>`, `<script>`, `<iframe>` 等）
+3. 首行必须是 Typst 指令（以 `#` 开头）
 
 详细规范见 CONVENTIONS.md。
 
