@@ -1,1 +1,0 @@
-import{J as e,L as t,Y as n}from"./CIgdjxu3.js";var r=n(null),i={get data(){return t(r)},set(t){e(r,t,!0)},clear(){e(r,null)}};export{i as t};

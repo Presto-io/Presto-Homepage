@@ -14,17 +14,19 @@ import Footer from '../../components/Footer.astro';
       loading="eager"
     ></iframe>
     <script>
-      const TEMPLATE_INSTALL_RE = /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
+      const TEMPLATE_ID_RE = /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
 
-      function isSafeTemplateInstallUrl(value) {
+      function isSafeTemplateOpenUrl(value) {
         if (typeof value !== 'string') return false;
         try {
           const url = new URL(value);
           return url.protocol === 'presto:' &&
-            url.hostname === 'install' &&
-            !url.search &&
+            url.hostname === 'open' &&
+            (url.pathname === '' || url.pathname === '/') &&
             !url.hash &&
-            TEMPLATE_INSTALL_RE.test(url.pathname.slice(1));
+            url.searchParams.get('resource') === 'template' &&
+            TEMPLATE_ID_RE.test(url.searchParams.get('id') || '') &&
+            Array.from(url.searchParams.keys()).every((key) => key === 'resource' || key === 'id');
         } catch {
           return false;
         }
@@ -34,7 +36,7 @@ import Footer from '../../components/Footer.astro';
         // SEC: Only accept messages from same origin (embedded iframe)
         if (e.origin !== window.location.origin) return;
 
-        if (e.data?.type === 'presto-open-template' && isSafeTemplateInstallUrl(e.data.url)) {
+        if (e.data?.type === 'presto-open-template' && isSafeTemplateOpenUrl(e.data.url)) {
           window.location.href = e.data.url;
         }
         if (e.data?.type === 'presto-resize' && e.data.height > 0) {
